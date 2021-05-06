@@ -39,15 +39,27 @@ module gpio #(
   /// match the number of defined GPIOs in the register file.
   parameter int unsigned NrGPIOs    = 64
 ) (
+  /// Primary input clock. The control interface is suposed to be synchronous to
+  /// this clock.
   input logic                clk_i,
+  /// Asynchronous active-low reset
   input logic                rst_ni,
+  /// GPIO input signals from IO Pads (Pad -> SoC) signal.
   input logic [NrGPIOs-1:0]  gpio_in,
+  /// GPIO output signals to IO Pads (SoC -> Pad) signal.
   output logic [NrGPIOs-1:0] gpio_out,
+  /// GPIO direction signals. This signal is supposed to control the direction of
+  /// the corresponding IO Pad. 0 -> RX (inpu), 1 -> TX (output).
   output logic [NrGPIOs-1:0] gpio_dir_out, // 0 -> input, 1 -> output
-  output logic [NrGPIOs-1:0] gpio_in_sync, // sampled and synchronized GPIO
-                                           // input.
+  /// Synchronized GPIO input signals. This port provides the `gpio_in` signal
+  /// synchronized to `clk_i`.
+  output logic [NrGPIOs-1:0] gpio_in_sync,
+  /// Global interrupt line. The interrupt line is asserted for one `clk_i`
+  /// whenever an unmasked interrupt on one of the GPIOs arrives.
   output logic               interrupt,
+  /// Control interface request side using register_interface protocol.
   input                      reg_req_t reg_req_i,
+  /// Control interface request side using register_interface protocol.
   output                     reg_rsp_t reg_rsp_o
 );
   import gpio_reg_pkg::*;
