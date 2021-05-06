@@ -22,17 +22,22 @@
 //-----------------------------------------------------------------------------
 
 
-`include "include/typedef.svh"
+`include "register_interface/typedef.svh"
+`include "register_interface/assign.svh"
 
 module gpio #(
-  // Regbus request struct type.
-  parameter type reg_req_t = logic,
+  /// Data width of the reg_bus
+  parameter int unsigned DATA_WIDTH = 32,
+  /// Regbus request struct type.
+  parameter type reg_req_t          = logic,
   /// Regbus response struct type.
-  parameter type reg_rsp_t = logic,
-  localparam int unsigned NrGPIOs = 64 // In order to reparametrize this module,
-                                       // alter the hjson register file
-                                       // description accordingly and regenerate
-                                       // the register file using reggen.
+  parameter type reg_rsp_t          = logic,
+  /// The number of GPIOs in this module. This parameter can only be changed if
+  /// the corresponding register file is regenerated with the same number of
+  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
+  /// module will error out during elaboration if the given parameter does not
+  /// match the number of defined GPIOs in the register file.
+  parameter int unsigned NrGPIOs    = 64
 ) (
   input logic                clk_i,
   input logic                rst_ni,
@@ -45,10 +50,14 @@ module gpio #(
   input                      reg_req_t reg_req_i,
   output                     reg_rsp_t reg_rsp_o
 );
-  if (NrGPIOs % 32 != 0)
-    $error("Only multiples of 32 GPIOs are supported.");
-
   import gpio_reg_pkg::*;
+
+  // Elaboration time SystemTasks.
+  if (DATA_WIDTH != $bits(gpio_reg_pkg::gpio_reg2hw_gpio_dir_mreg_t))
+    $error("The data width of the register interface does not match the data width of the generated register file.");
+
+  if (NrGPIOs != DATA_WIDTH * gpio_reg_pkg::GPIORegCount)
+    $error("Wrong parametrization of the generated regfile. The number of GPIOs in the register (%d * %d) file does not match the parametrization. Did you forget to regenrate the register file for your parametrization?", gpio_reg_pkg::GPIORegCount, DATA_WIDTH);
 
   // Internal Signals
   gpio_reg2hw_t s_reg2hw;
@@ -59,7 +68,7 @@ module gpio #(
   logic [NrGPIOs-1:0] s_gpio_fall_edge;
   logic [NrGPIOs-1:0] s_gpio_fall_intrpt_mask;
 
-  logic [NrGPIOs/32-1:0][31:0] interrupts;
+  logic [NrGPIOs/DATA_WIDTH-1:0][DATA_WIDTH-1:0] interrupts;
 
 
   // Instantiate auto-generated register file
@@ -76,9 +85,9 @@ module gpio #(
     .devmode_i(1'b1)
   );
 
-  // Instantiate logic for individual gpios in blocks of 32
-  for (genvar reg_idx = 0; reg_idx < NrGPIOs/32; reg_idx++) begin : gen_32_gpios
-    for (genvar i = 0; i < 32; i++) begin : gen_gpio
+  // Instantiate logic for individual gpios in blocks of DATA_WIDTH
+  for (genvar reg_idx = 0; reg_idx < NrGPIOs/DATA_WIDTH; reg_idx++) begin : gen_block_gpios
+    for (genvar i = 0; i < DATA_WIDTH; i++) begin : gen_gpio
       // Instantiate synchronizer to synchronize input to sampling clock
       sync_wedge #(
         .STAGES(2)
@@ -86,19 +95,19 @@ module gpio #(
         .clk_i,
         .rst_ni,
         .en_i(s_reg2hw.gpio_en[reg_idx].q[i] && ~s_reg2hw.gpio_dir),
-        .serial_i(gpio_in[reg_idx*32+i]),
-        .r_edge_o(s_gpio_rise_edge[reg_idx*32+i]),
-        .f_edge_o(s_gpio_fall_edge[reg_idx*32+i]),
+        .serial_i(gpio_in[reg_idx*DATA_WIDTH+i]),
+        .r_edge_o(s_gpio_rise_edge[reg_idx*DATA_WIDTH+i]),
+        .f_edge_o(s_gpio_fall_edge[reg_idx*DATA_WIDTH+i]),
         .serial_o(s_hw2reg.gpio_in[reg_idx].d[i])
       );
 
       // Output assignments
-      assign gpio_out[reg_idx*32+i] = s_reg2hw.gpio_out[reg_idx].q[i];
-      assign gpio_dir_out[reg_idx*32+i] = s_reg2hw.gpio_dir[reg_idx].q[i];
+      assign gpio_out[reg_idx*DATA_WIDTH+i] = s_reg2hw.gpio_out[reg_idx].q[i];
+      assign gpio_dir_out[reg_idx*DATA_WIDTH+i] = s_reg2hw.gpio_dir[reg_idx].q[i];
 
       // Wire individual interrupts
-      assign s_gpio_rise_intrpt_mask[reg_idx*32+i] = s_reg2hw.intrpt_rise_en[reg_idx].q[i];
-      assign s_gpio_fall_intrpt_mask[reg_idx*32+i] = s_reg2hw.intrpt_fall_en[reg_idx].q[i];
+      assign s_gpio_rise_intrpt_mask[reg_idx*DATA_WIDTH+i] = s_reg2hw.intrpt_rise_en[reg_idx].q[i];
+      assign s_gpio_fall_intrpt_mask[reg_idx*DATA_WIDTH+i] = s_reg2hw.intrpt_fall_en[reg_idx].q[i];
       assign interrupts[reg_idx][i]                = (s_gpio_rise_edge & s_gpio_rise_intrpt_mask) | (s_gpio_fall_edge & s_gpio_fall_intrpt_mask);
 
     end // block: gen_gpio
@@ -122,40 +131,54 @@ module gpio #(
 
     //Wire interrupt registers
     assign s_hw2reg.intrpt_status[reg_idx].d = interrupts[reg_idx] | s_reg2hw.intrpt_status[reg_idx].q;
-    // Only update if there are any pending interrupts in this 32-bit register
+    // Only update if there are any pending interrupts in this register
     assign s_hw2reg.intrpt_status[reg_idx].de = |interrupts[reg_idx];
   end
 
 
 endmodule : gpio
 
-module gpio_intf (
-    input logic                clk_i,
-    input logic                rst_ni,
-    input logic [NrGPIOs-1:0]  gpio_in,
-    output logic [NrGPIOs-1:0] gpio_out,
-    output logic [NrGPIOs-1:0] gpio_dir_out, // 0 -> input, 1 -> output
-    output logic [NrGPIOs-1:0] gpio_in_sync, // sampled and synchronized GPIO
-    // input.
-    output logic               interrupt,
-    REG_BUS.in                 reg_bus
-    );
+module gpio_intf #(
+  /// ADDR_WIDTH of the reg_bus interface
+  parameter int unsigned  ADDR_WIDTH = 32,
+  /// DATA_WIDTH of the reg_bus interface
+  parameter int unsigned  DATA_WIDTH = 32,
+  /// The number of GPIOs in this module. This parameter can only be changed if
+  /// the corresponding register file is regenerated with the same number of
+  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
+  /// module will error out during elaboration if the given parameter does not
+  /// match the number of defined GPIOs in the register file.
+  parameter int unsigned  NrGPIOs    = 64,
+  localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
+) (
+  input logic                clk_i,
+  input logic                rst_ni,
+  input logic [NrGPIOs-1:0]  gpio_in,
+  output logic [NrGPIOs-1:0] gpio_out,
+  output logic [NrGPIOs-1:0] gpio_dir_out, // 0 -> input, 1 -> output
+  output logic [NrGPIOs-1:0] gpio_in_sync, // sampled and synchronized GPIO
+  // input.
+  output logic               interrupt,
+  REG_BUS.in                 reg_bus
+);
 
-  typedef logic [31:0]         addr_t;
-  typedef logic [31:0]         data_t;
-  typedef logic [3:0]          strb_t;
-  `REG_BUS_TYPEDEFF_ALL(reg_bus, addr_t, data_t, strb_t)
+  // Define structs for reg_bus
+  typedef logic [ADDR_WIDTH-1:0] addr_t;
+  typedef logic [DATA_WIDTH-1:0] data_t;
+  typedef logic [STRB_WIDTH-1:0] strb_t;
+  `REG_BUS_TYPEDEF_ALL(reg_bus, addr_t, data_t, strb_t)
 
   reg_bus_req_t s_reg_req;
   reg_bus_rsp_t s_reg_rsp;
 
+  // Assign SV interface to structs
   `REG_BUS_ASSIGN_TO_REQ(s_reg_req, reg_bus);
-  `REG_BUS_ASSIGN_FROM_RSP(s_reg_req, reg_bus);
+  `REG_BUS_ASSIGN_FROM_RSP(reg_bus, s_reg_rsp);
 
   gpio #(
     .reg_req_t(reg_bus_req_t),
     .reg_rsp_t(reg_bus_rsp_t)
-  ) (
+  ) i_gpio (
      .clk_i,
      .rst_ni,
      .gpio_in,

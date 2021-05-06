@@ -1,14 +1,14 @@
 //-----------------------------------------------------------------------------
-// Title         : GPIO AXI Lite Wrapper
+// Title         : GPIO APB Wrapper
 //-----------------------------------------------------------------------------
-// File          : gpio_axi_lite_wrap.sv
+// File          : gpio_apb_wrap.sv
 // Author        : Manuel Eggimann  <meggimann@iis.ee.ethz.ch>
 // Created       : 06.05.2021
 //-----------------------------------------------------------------------------
 // Description :
-// This file provides a wrapper around the GPIO peripheral with an AXI4-lite
+// This file provides wrappers around the GPIO peripheral with an APB
 // interface. The file contains two versions of the module, one structs for the
-// AXI-lite interface and one using SystemVerilog Interfaces.
+// APB interface and one using SystemVerilog Interfaces.
 //-----------------------------------------------------------------------------
 // Copyright (C) 2013-2021 ETH Zurich, University of Bologna
 // Copyright and related rights are licensed under the Solderpad Hardware
@@ -20,25 +20,18 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 //-----------------------------------------------------------------------------
+`include "apb/typedef.svh"
+`include "apb/assign.svh"
 
-
-`include "register_interface/typedef.svh"
-`include "register_interface/assign.svh"
-`include "axi/typedef.svh"
-`include "axi/assign.svh"
-
-module gpio_axi_lite_wrap # (
-  /// ADDR_WIDTH of the AXI lite interface
+module gpio_apb_wrap # (
+  /// ADDR_WIDTH of the APB interface
   parameter int unsigned  ADDR_WIDTH = 32,
-  /// DATA_WIDTH of the AXI lite interface
+  /// DATA_WIDTH of the APB interface
   parameter int unsigned  DATA_WIDTH = 32,
-  /// Whether the AXI-Lite W channel should be decoupled with a register. This
-  /// can help break long paths at the expense of registers.
-  parameter bit          DECOUPLE_W  = 1,
-  /// AXI-Lite request struct type.
-  parameter type axi_lite_req_t      = logic,
-  /// AXI-Lite response struct type.
-  parameter type axi_lite_rsp_t      = logic,
+  /// APB request struct type.
+  parameter type apb_req_t           = logic,
+  /// APB response struct type.
+  parameter type apb_rsp_t           = logic,
   /// The number of GPIOs in this module. This parameter can only be changed if
   /// the corresponding register file is regenerated with the same number of
   /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
@@ -55,44 +48,28 @@ module gpio_axi_lite_wrap # (
   output logic [NrGPIOs-1:0] gpio_in_sync, // sampled and synchronized GPIO
   // input.
   output logic               interrupt,
-  input axi_lite_req_t       axi_lite_req_i,
-  output axi_lite_rsp_t      axi_lite_rsp_o
+  input apb_req_t            apb_req_i,
+  output apb_rsp_t           apb_rsp_o
 );
 
-  if (STRB_WIDTH != DATA_WIDTH/8)
-    $error("Unsupported AXI strobe width (%d) The underlying register bus protocol does not support strobe widths other than 8-bit.", STRB_WIDTH);
-
-  typedef logic [ADDR_WIDTH-1:0] addr_t;
-  typedef logic [DATA_WIDTH-1:0] data_t;
-  typedef logic [STRB_WIDTH-1:0] strb_t;
-  `REG_BUS_TYPEDEF_ALL(reg_bus, addr_t, data_t, strb_t)
-
-  reg_bus_req_t s_reg_req;
-  reg_bus_rsp_t s_reg_rsp;
-
-  axi_lite_to_reg #(
-    .ADDR_WIDTH(ADDR_WIDTH),
-    .DATA_WIDTH(DATA_WIDTH),
-    .BUFFER_DEPTH(1),
-    .DECOUPLE_W(0),
-    .axi_lite_req_t(axi_lite_req_t),
-    .axi_lite_rsp_t(axi_lite_rsp_t),
-    .reg_req_t(reg_bus_req_t),
-    .reg_rsp_t(reg_bus_rsp_t)
-  ) i_axi_lite_to_reg (
+  // Convert APB to reg_bus
+  REG_BUS #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) s_reg_bus();
+  apb_to_reg i_abp_to_reg (
     .clk_i,
     .rst_ni,
-    .axi_lite_req_i,
-    .axi_lite_rsp_o,
-    .reg_req_o(s_reg_req),
-    .reg_rsp_i(s_reg_rsp)
+    .penable_i ( apb_req_i.penable ),
+    .pwrite_i  ( apb_req_i.pwrite  ),
+    .paddr_i   ( apb_req_i.paddr   ),
+    .psel_i    ( apb_req_i.psel    ),
+    .pwdata_i  ( apb_req_i.pwdata  ),
+    .prdata_o  ( apb_rsp_o.prdata  ),
+    .pready_o  ( apb_rsp_o.pready  ),
+    .pslverr_o ( apb_rsp_o.pslverr ),
+    .reg_o     ( s_reg_bus         )
   );
 
-
-  gpio #(
-    .reg_req_t ( reg_bus_req_t ),
-    .reg_rsp_t ( reg_bus_rsp_t ),
-    .NrGPIOs   ( NrGPIOs       )
+  gpio_intf #(
+    .NrGPIOs(NrGPIOs)
   ) i_gpio (
     .clk_i,
     .rst_ni,
@@ -101,20 +78,16 @@ module gpio_axi_lite_wrap # (
     .gpio_dir_out,
     .gpio_in_sync,
     .interrupt,
-    .reg_req_i ( s_reg_req ),
-    .reg_rsp_o ( s_reg_rsp )
+    .reg_bus(s_reg_bus)
   );
+endmodule // gpio_apb_wrap
 
-endmodule
 
-module gpio_axi_lite_wrap_intf # (
-  /// ADDR_WIDTH of the AXI lite interface
+module gpio_apb_wrap_intf # (
+  /// ADDR_WIDTH of the APB interface
   parameter int unsigned  ADDR_WIDTH = 32,
-  /// DATA_WIDTH of the AXI lite interface
+  /// DATA_WIDTH of the APB interface
   parameter int unsigned  DATA_WIDTH = 32,
-  /// Whether the AXI-Lite W channel should be decoupled with a register. This
-  /// can help break long paths at the expense of registers.
-  parameter bit  DECOUPLE_W          = 1,
   /// The number of GPIOs in this module. This parameter can only be changed if
   /// the corresponding register file is regenerated with the same number of
   /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
@@ -131,28 +104,29 @@ module gpio_axi_lite_wrap_intf # (
   output logic [NrGPIOs-1:0] gpio_in_sync, // sampled and synchronized GPIO
   // input.
   output logic               interrupt,
-  AXI_LITE.Slave             axi_i
+  APB_BUS.Slave              apb_slave
 );
 
-  // Convert SV interface to structs
-  // Declare axi_lite structs
+  // Convert SV Interface to structs
   typedef logic [ADDR_WIDTH-1:0] addr_t;
   typedef logic [DATA_WIDTH-1:0] data_t;
-  typedef logic [STRB_WIDTH-1:0] strb_t;
-  `AXI_LITE_TYPEDEF_ALL(axi_lite, addr_t, data_t, strb_t)
-  // Declare axi_lit struct signals
-  axi_lite_req_t s_axi_lite_req;
-  axi_lite_resp_t s_axi_lite_rsp;
-  // Connect SV interface to structs
-  `AXI_LITE_ASSIGN_TO_REQ(s_axi_lite_req, axi_i)
-  `AXI_LITE_ASSIGN_FROM_RESP(axi_i, s_axi_lite_rsp)
+  typedef logic [DATA_WIDTH/8-1:0] strb_t; // The APB bus interface only
+                                           // supports 8-bit strobe so we don't need to
+                                           // check the strobe width of the intput bus.
+  `APB_TYPEDEF_REQ_T(apb_req_t, addr_t, data_t, strb_t)
+  `APB_TYPEDEF_RESP_T(apb_rsp_t, data_t)
 
-  gpio_axi_lite_wrap #(
-    .DECOUPLE_W     ( DECOUPLE_W     ),
-    .axi_lite_req_t ( axi_lite_req_t ),
-    .axi_lite_rsp_t ( axi_lite_resp_t ),
-    .NrGPIOs        ( NrGPIOs        )
-  ) i_gpio_axi_lite_wrap (
+  apb_req_t s_apb_req;
+  apb_rsp_t s_apb_rsp;
+
+  `APB_ASSIGN_TO_REQ(s_apb_req, apb_slave)
+  `APB_ASSIGN_FROM_RESP(apb_slave, s_apb_rsp)
+
+  gpio_apb_wrap #(
+    .apb_req_t             (apb_req_t),
+    .apb_rsp_t             (apb_rsp_t),
+    .NrGPIOs               (NrGPIOs)
+  ) i_gpio_apb_wrap (
     .clk_i,
     .rst_ni,
     .gpio_in,
@@ -160,8 +134,8 @@ module gpio_axi_lite_wrap_intf # (
     .gpio_dir_out,
     .gpio_in_sync,
     .interrupt,
-    .axi_lite_req_i ( s_axi_lite_req ),
-    .axi_lite_rsp_o ( s_axi_lite_rsp )
-   );
+    .apb_req_i ( s_apb_req ),
+    .apb_rsp_o ( s_apb_rsp )
+  );
 
 endmodule

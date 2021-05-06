@@ -6,8 +6,11 @@ package:
 dependencies:
   common_cells: { git: "https://github.com/pulp-platform/common_cells.git", version: 1.21.0 }
   register_interface: { git: "https://github.com/pulp-platform/register_interface.git", version: 0.2.2}
+  apb: {git: "https://github.com/pulp-platform/apb.git", version: 0.2.0 }
 
 sources:
   - rtl/gpio_reg_pkg.sv
   - rtl/gpio_reg_top.sv
   - rtl/gpio.sv
+  - rtl/gpio_axi_lite_wrap.sv
+  - rtl/gpio_apb_wrap.sv
