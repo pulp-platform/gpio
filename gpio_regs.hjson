@@ -5,7 +5,7 @@
     param_list: [
         {
             name: GPIOCount
-            default: "64"
+            default: "56"
         }
     ]
     bus_interfaces: [
@@ -47,6 +47,12 @@
                          interrupts are cleared. If 0, generate one cycle wide pulse for every interrupt.
                     '''
                     resval: 0
+                }
+                {
+                    name: "reserved"
+                    bits: "1"
+                    desc: " Reserved for future use"
+
                 }
             ]
         }

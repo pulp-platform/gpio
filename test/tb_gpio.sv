@@ -84,8 +84,7 @@ module tb_gpio;
   // Instantiate DUT
   gpio_intf #(
     .ADDR_WIDTH ( AddrWidth ),
-    .DATA_WIDTH ( DataWidth ),
-    .NrGPIOs    ( NrGPIOs   )
+    .DATA_WIDTH ( DataWidth )
   ) i_dut (
     .reg_bus        ( s_reg_bus.in                ),
     // Outputs
@@ -162,10 +161,10 @@ program automatic test #(
     @(posedge rst_ni);
 
     // Debug
-    $info("Check reg  interface behavior");
-    addr = GPIO_DUMMY_0_OFFSET;
-    data = 32'h190;
-    gpio_reg_driver.send_write(addr, data, strb, error);
+    // $info("Check reg  interface behavior");
+    // addr = GPIO_DUMMY_0_OFFSET;
+    // data = 32'h190;
+    // gpio_reg_driver.send_write(addr, data, strb, error);
 
     // Configure GPIOs with random modes and randomly drive them
     begin : check_output

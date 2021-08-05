@@ -34,17 +34,12 @@ module gpio_axi_lite_wrap # (
   parameter int unsigned  DATA_WIDTH = 32,
   /// Whether the AXI-Lite W channel should be decoupled with a register. This
   /// can help break long paths at the expense of registers.
-  parameter bit          DECOUPLE_W  = 1,
+  parameter bit           DECOUPLE_W = 1,
   /// AXI-Lite request struct type.
-  parameter type axi_lite_req_t      = logic,
+  parameter type axi_lite_req_t = logic,
   /// AXI-Lite response struct type.
-  parameter type axi_lite_rsp_t      = logic,
-  /// The number of GPIOs in this module. This parameter can only be changed if
-  /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned NrGPIOs     = 64,
+  parameter type axi_lite_rsp_t = logic,
+  localparam int unsigned NrGPIOs = gpio_reg_pkg::GPIOCount,
   localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
 )(
   input logic                clk_i,
@@ -90,6 +85,8 @@ module gpio_axi_lite_wrap # (
 
 
   gpio #(
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .DATA_WIDTH ( DATA_WIDTH ),
     .reg_req_t ( reg_bus_req_t ),
     .reg_rsp_t ( reg_bus_rsp_t ),
     .NrGPIOs   ( NrGPIOs       )
@@ -114,13 +111,8 @@ module gpio_axi_lite_wrap_intf # (
   parameter int unsigned  DATA_WIDTH = 32,
   /// Whether the AXI-Lite W channel should be decoupled with a register. This
   /// can help break long paths at the expense of registers.
-  parameter bit  DECOUPLE_W          = 1,
-  /// The number of GPIOs in this module. This parameter can only be changed if
-  /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned NrGPIOs     = 64,
+  parameter bit           DECOUPLE_W = 1,
+  localparam int unsigned NrGPIOs = gpio_reg_pkg::GPIOCount,
   localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
 )(
   input logic                clk_i,
@@ -148,10 +140,11 @@ module gpio_axi_lite_wrap_intf # (
   `AXI_LITE_ASSIGN_FROM_RESP(axi_i, s_axi_lite_rsp)
 
   gpio_axi_lite_wrap #(
-    .DECOUPLE_W     ( DECOUPLE_W     ),
-    .axi_lite_req_t ( axi_lite_req_t ),
-    .axi_lite_rsp_t ( axi_lite_resp_t ),
-    .NrGPIOs        ( NrGPIOs        )
+    .ADDR_WIDTH     ( ADDR_WIDTH      ),
+    .DATA_WIDTH     ( DATA_WIDTH      ),
+    .DECOUPLE_W     ( DECOUPLE_W      ),
+    .axi_lite_req_t ( axi_lite_req_t  ),
+    .axi_lite_rsp_t ( axi_lite_resp_t )
   ) i_gpio_axi_lite_wrap (
     .clk_i,
     .rst_ni,

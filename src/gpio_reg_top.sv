@@ -72,9 +72,12 @@ module gpio_reg_top #(
   logic info_gpio_cnt_re;
   logic [9:0] info_version_qs;
   logic info_version_re;
-  logic cfg_qs;
-  logic cfg_wd;
-  logic cfg_we;
+  logic cfg_intrpt_mode_qs;
+  logic cfg_intrpt_mode_wd;
+  logic cfg_intrpt_mode_we;
+  logic cfg_reserved_qs;
+  logic cfg_reserved_wd;
+  logic cfg_reserved_we;
   logic [1:0] gpio_mode_0_mode_0_qs;
   logic [1:0] gpio_mode_0_mode_0_wd;
   logic gpio_mode_0_mode_0_we;
@@ -243,30 +246,6 @@ module gpio_reg_top #(
   logic [1:0] gpio_mode_3_mode_55_qs;
   logic [1:0] gpio_mode_3_mode_55_wd;
   logic gpio_mode_3_mode_55_we;
-  logic [1:0] gpio_mode_3_mode_56_qs;
-  logic [1:0] gpio_mode_3_mode_56_wd;
-  logic gpio_mode_3_mode_56_we;
-  logic [1:0] gpio_mode_3_mode_57_qs;
-  logic [1:0] gpio_mode_3_mode_57_wd;
-  logic gpio_mode_3_mode_57_we;
-  logic [1:0] gpio_mode_3_mode_58_qs;
-  logic [1:0] gpio_mode_3_mode_58_wd;
-  logic gpio_mode_3_mode_58_we;
-  logic [1:0] gpio_mode_3_mode_59_qs;
-  logic [1:0] gpio_mode_3_mode_59_wd;
-  logic gpio_mode_3_mode_59_we;
-  logic [1:0] gpio_mode_3_mode_60_qs;
-  logic [1:0] gpio_mode_3_mode_60_wd;
-  logic gpio_mode_3_mode_60_we;
-  logic [1:0] gpio_mode_3_mode_61_qs;
-  logic [1:0] gpio_mode_3_mode_61_wd;
-  logic gpio_mode_3_mode_61_we;
-  logic [1:0] gpio_mode_3_mode_62_qs;
-  logic [1:0] gpio_mode_3_mode_62_wd;
-  logic gpio_mode_3_mode_62_we;
-  logic [1:0] gpio_mode_3_mode_63_qs;
-  logic [1:0] gpio_mode_3_mode_63_wd;
-  logic gpio_mode_3_mode_63_we;
   logic gpio_en_0_gpio_en_0_qs;
   logic gpio_en_0_gpio_en_0_wd;
   logic gpio_en_0_gpio_en_0_we;
@@ -435,30 +414,6 @@ module gpio_reg_top #(
   logic gpio_en_1_gpio_en_55_qs;
   logic gpio_en_1_gpio_en_55_wd;
   logic gpio_en_1_gpio_en_55_we;
-  logic gpio_en_1_gpio_en_56_qs;
-  logic gpio_en_1_gpio_en_56_wd;
-  logic gpio_en_1_gpio_en_56_we;
-  logic gpio_en_1_gpio_en_57_qs;
-  logic gpio_en_1_gpio_en_57_wd;
-  logic gpio_en_1_gpio_en_57_we;
-  logic gpio_en_1_gpio_en_58_qs;
-  logic gpio_en_1_gpio_en_58_wd;
-  logic gpio_en_1_gpio_en_58_we;
-  logic gpio_en_1_gpio_en_59_qs;
-  logic gpio_en_1_gpio_en_59_wd;
-  logic gpio_en_1_gpio_en_59_we;
-  logic gpio_en_1_gpio_en_60_qs;
-  logic gpio_en_1_gpio_en_60_wd;
-  logic gpio_en_1_gpio_en_60_we;
-  logic gpio_en_1_gpio_en_61_qs;
-  logic gpio_en_1_gpio_en_61_wd;
-  logic gpio_en_1_gpio_en_61_we;
-  logic gpio_en_1_gpio_en_62_qs;
-  logic gpio_en_1_gpio_en_62_wd;
-  logic gpio_en_1_gpio_en_62_we;
-  logic gpio_en_1_gpio_en_63_qs;
-  logic gpio_en_1_gpio_en_63_wd;
-  logic gpio_en_1_gpio_en_63_we;
   logic gpio_in_0_gpio_in_0_qs;
   logic gpio_in_0_gpio_in_0_re;
   logic gpio_in_0_gpio_in_1_qs;
@@ -571,22 +526,6 @@ module gpio_reg_top #(
   logic gpio_in_1_gpio_in_54_re;
   logic gpio_in_1_gpio_in_55_qs;
   logic gpio_in_1_gpio_in_55_re;
-  logic gpio_in_1_gpio_in_56_qs;
-  logic gpio_in_1_gpio_in_56_re;
-  logic gpio_in_1_gpio_in_57_qs;
-  logic gpio_in_1_gpio_in_57_re;
-  logic gpio_in_1_gpio_in_58_qs;
-  logic gpio_in_1_gpio_in_58_re;
-  logic gpio_in_1_gpio_in_59_qs;
-  logic gpio_in_1_gpio_in_59_re;
-  logic gpio_in_1_gpio_in_60_qs;
-  logic gpio_in_1_gpio_in_60_re;
-  logic gpio_in_1_gpio_in_61_qs;
-  logic gpio_in_1_gpio_in_61_re;
-  logic gpio_in_1_gpio_in_62_qs;
-  logic gpio_in_1_gpio_in_62_re;
-  logic gpio_in_1_gpio_in_63_qs;
-  logic gpio_in_1_gpio_in_63_re;
   logic gpio_out_0_gpio_out_0_qs;
   logic gpio_out_0_gpio_out_0_wd;
   logic gpio_out_0_gpio_out_0_we;
@@ -755,30 +694,6 @@ module gpio_reg_top #(
   logic gpio_out_1_gpio_out_55_qs;
   logic gpio_out_1_gpio_out_55_wd;
   logic gpio_out_1_gpio_out_55_we;
-  logic gpio_out_1_gpio_out_56_qs;
-  logic gpio_out_1_gpio_out_56_wd;
-  logic gpio_out_1_gpio_out_56_we;
-  logic gpio_out_1_gpio_out_57_qs;
-  logic gpio_out_1_gpio_out_57_wd;
-  logic gpio_out_1_gpio_out_57_we;
-  logic gpio_out_1_gpio_out_58_qs;
-  logic gpio_out_1_gpio_out_58_wd;
-  logic gpio_out_1_gpio_out_58_we;
-  logic gpio_out_1_gpio_out_59_qs;
-  logic gpio_out_1_gpio_out_59_wd;
-  logic gpio_out_1_gpio_out_59_we;
-  logic gpio_out_1_gpio_out_60_qs;
-  logic gpio_out_1_gpio_out_60_wd;
-  logic gpio_out_1_gpio_out_60_we;
-  logic gpio_out_1_gpio_out_61_qs;
-  logic gpio_out_1_gpio_out_61_wd;
-  logic gpio_out_1_gpio_out_61_we;
-  logic gpio_out_1_gpio_out_62_qs;
-  logic gpio_out_1_gpio_out_62_wd;
-  logic gpio_out_1_gpio_out_62_we;
-  logic gpio_out_1_gpio_out_63_qs;
-  logic gpio_out_1_gpio_out_63_wd;
-  logic gpio_out_1_gpio_out_63_we;
   logic gpio_set_0_gpio_set_0_wd;
   logic gpio_set_0_gpio_set_0_we;
   logic gpio_set_0_gpio_set_1_wd;
@@ -891,22 +806,6 @@ module gpio_reg_top #(
   logic gpio_set_1_gpio_set_54_we;
   logic gpio_set_1_gpio_set_55_wd;
   logic gpio_set_1_gpio_set_55_we;
-  logic gpio_set_1_gpio_set_56_wd;
-  logic gpio_set_1_gpio_set_56_we;
-  logic gpio_set_1_gpio_set_57_wd;
-  logic gpio_set_1_gpio_set_57_we;
-  logic gpio_set_1_gpio_set_58_wd;
-  logic gpio_set_1_gpio_set_58_we;
-  logic gpio_set_1_gpio_set_59_wd;
-  logic gpio_set_1_gpio_set_59_we;
-  logic gpio_set_1_gpio_set_60_wd;
-  logic gpio_set_1_gpio_set_60_we;
-  logic gpio_set_1_gpio_set_61_wd;
-  logic gpio_set_1_gpio_set_61_we;
-  logic gpio_set_1_gpio_set_62_wd;
-  logic gpio_set_1_gpio_set_62_we;
-  logic gpio_set_1_gpio_set_63_wd;
-  logic gpio_set_1_gpio_set_63_we;
   logic gpio_clear_0_gpio_clear_0_wd;
   logic gpio_clear_0_gpio_clear_0_we;
   logic gpio_clear_0_gpio_clear_1_wd;
@@ -1019,22 +918,6 @@ module gpio_reg_top #(
   logic gpio_clear_1_gpio_clear_54_we;
   logic gpio_clear_1_gpio_clear_55_wd;
   logic gpio_clear_1_gpio_clear_55_we;
-  logic gpio_clear_1_gpio_clear_56_wd;
-  logic gpio_clear_1_gpio_clear_56_we;
-  logic gpio_clear_1_gpio_clear_57_wd;
-  logic gpio_clear_1_gpio_clear_57_we;
-  logic gpio_clear_1_gpio_clear_58_wd;
-  logic gpio_clear_1_gpio_clear_58_we;
-  logic gpio_clear_1_gpio_clear_59_wd;
-  logic gpio_clear_1_gpio_clear_59_we;
-  logic gpio_clear_1_gpio_clear_60_wd;
-  logic gpio_clear_1_gpio_clear_60_we;
-  logic gpio_clear_1_gpio_clear_61_wd;
-  logic gpio_clear_1_gpio_clear_61_we;
-  logic gpio_clear_1_gpio_clear_62_wd;
-  logic gpio_clear_1_gpio_clear_62_we;
-  logic gpio_clear_1_gpio_clear_63_wd;
-  logic gpio_clear_1_gpio_clear_63_we;
   logic gpio_toggle_0_gpio_toggle_0_wd;
   logic gpio_toggle_0_gpio_toggle_0_we;
   logic gpio_toggle_0_gpio_toggle_1_wd;
@@ -1147,22 +1030,6 @@ module gpio_reg_top #(
   logic gpio_toggle_1_gpio_toggle_54_we;
   logic gpio_toggle_1_gpio_toggle_55_wd;
   logic gpio_toggle_1_gpio_toggle_55_we;
-  logic gpio_toggle_1_gpio_toggle_56_wd;
-  logic gpio_toggle_1_gpio_toggle_56_we;
-  logic gpio_toggle_1_gpio_toggle_57_wd;
-  logic gpio_toggle_1_gpio_toggle_57_we;
-  logic gpio_toggle_1_gpio_toggle_58_wd;
-  logic gpio_toggle_1_gpio_toggle_58_we;
-  logic gpio_toggle_1_gpio_toggle_59_wd;
-  logic gpio_toggle_1_gpio_toggle_59_we;
-  logic gpio_toggle_1_gpio_toggle_60_wd;
-  logic gpio_toggle_1_gpio_toggle_60_we;
-  logic gpio_toggle_1_gpio_toggle_61_wd;
-  logic gpio_toggle_1_gpio_toggle_61_we;
-  logic gpio_toggle_1_gpio_toggle_62_wd;
-  logic gpio_toggle_1_gpio_toggle_62_we;
-  logic gpio_toggle_1_gpio_toggle_63_wd;
-  logic gpio_toggle_1_gpio_toggle_63_we;
   logic intrpt_rise_en_0_intrpt_rise_en_0_qs;
   logic intrpt_rise_en_0_intrpt_rise_en_0_wd;
   logic intrpt_rise_en_0_intrpt_rise_en_0_we;
@@ -1331,30 +1198,6 @@ module gpio_reg_top #(
   logic intrpt_rise_en_1_intrpt_rise_en_55_qs;
   logic intrpt_rise_en_1_intrpt_rise_en_55_wd;
   logic intrpt_rise_en_1_intrpt_rise_en_55_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_56_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_56_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_56_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_57_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_57_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_57_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_58_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_58_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_58_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_59_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_59_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_59_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_60_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_60_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_60_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_61_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_61_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_61_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_62_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_62_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_62_we;
-  logic intrpt_rise_en_1_intrpt_rise_en_63_qs;
-  logic intrpt_rise_en_1_intrpt_rise_en_63_wd;
-  logic intrpt_rise_en_1_intrpt_rise_en_63_we;
   logic intrpt_fall_en_0_intrpt_fall_en_0_qs;
   logic intrpt_fall_en_0_intrpt_fall_en_0_wd;
   logic intrpt_fall_en_0_intrpt_fall_en_0_we;
@@ -1523,30 +1366,6 @@ module gpio_reg_top #(
   logic intrpt_fall_en_1_intrpt_fall_en_55_qs;
   logic intrpt_fall_en_1_intrpt_fall_en_55_wd;
   logic intrpt_fall_en_1_intrpt_fall_en_55_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_56_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_56_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_56_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_57_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_57_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_57_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_58_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_58_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_58_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_59_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_59_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_59_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_60_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_60_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_60_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_61_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_61_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_61_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_62_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_62_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_62_we;
-  logic intrpt_fall_en_1_intrpt_fall_en_63_qs;
-  logic intrpt_fall_en_1_intrpt_fall_en_63_wd;
-  logic intrpt_fall_en_1_intrpt_fall_en_63_we;
   logic intrpt_lvl_high_en_0_intrpt_lvl_high_en_0_qs;
   logic intrpt_lvl_high_en_0_intrpt_lvl_high_en_0_wd;
   logic intrpt_lvl_high_en_0_intrpt_lvl_high_en_0_we;
@@ -1715,30 +1534,6 @@ module gpio_reg_top #(
   logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_qs;
   logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_wd;
   logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_we;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_qs;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_wd;
-  logic intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_we;
   logic intrpt_lvl_low_en_0_intrpt_lvl_low_en_0_qs;
   logic intrpt_lvl_low_en_0_intrpt_lvl_low_en_0_wd;
   logic intrpt_lvl_low_en_0_intrpt_lvl_low_en_0_we;
@@ -1907,30 +1702,6 @@ module gpio_reg_top #(
   logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_qs;
   logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_wd;
   logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_we;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_qs;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_wd;
-  logic intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_we;
   logic intrpt_status_0_intrpt_status_0_qs;
   logic intrpt_status_0_intrpt_status_0_wd;
   logic intrpt_status_0_intrpt_status_0_we;
@@ -2155,38 +1926,6 @@ module gpio_reg_top #(
   logic intrpt_status_1_intrpt_status_55_wd;
   logic intrpt_status_1_intrpt_status_55_we;
   logic intrpt_status_1_intrpt_status_55_re;
-  logic intrpt_status_1_intrpt_status_56_qs;
-  logic intrpt_status_1_intrpt_status_56_wd;
-  logic intrpt_status_1_intrpt_status_56_we;
-  logic intrpt_status_1_intrpt_status_56_re;
-  logic intrpt_status_1_intrpt_status_57_qs;
-  logic intrpt_status_1_intrpt_status_57_wd;
-  logic intrpt_status_1_intrpt_status_57_we;
-  logic intrpt_status_1_intrpt_status_57_re;
-  logic intrpt_status_1_intrpt_status_58_qs;
-  logic intrpt_status_1_intrpt_status_58_wd;
-  logic intrpt_status_1_intrpt_status_58_we;
-  logic intrpt_status_1_intrpt_status_58_re;
-  logic intrpt_status_1_intrpt_status_59_qs;
-  logic intrpt_status_1_intrpt_status_59_wd;
-  logic intrpt_status_1_intrpt_status_59_we;
-  logic intrpt_status_1_intrpt_status_59_re;
-  logic intrpt_status_1_intrpt_status_60_qs;
-  logic intrpt_status_1_intrpt_status_60_wd;
-  logic intrpt_status_1_intrpt_status_60_we;
-  logic intrpt_status_1_intrpt_status_60_re;
-  logic intrpt_status_1_intrpt_status_61_qs;
-  logic intrpt_status_1_intrpt_status_61_wd;
-  logic intrpt_status_1_intrpt_status_61_we;
-  logic intrpt_status_1_intrpt_status_61_re;
-  logic intrpt_status_1_intrpt_status_62_qs;
-  logic intrpt_status_1_intrpt_status_62_wd;
-  logic intrpt_status_1_intrpt_status_62_we;
-  logic intrpt_status_1_intrpt_status_62_re;
-  logic intrpt_status_1_intrpt_status_63_qs;
-  logic intrpt_status_1_intrpt_status_63_wd;
-  logic intrpt_status_1_intrpt_status_63_we;
-  logic intrpt_status_1_intrpt_status_63_re;
   logic intrpt_rise_status_0_intrpt_rise_status_0_qs;
   logic intrpt_rise_status_0_intrpt_rise_status_0_wd;
   logic intrpt_rise_status_0_intrpt_rise_status_0_we;
@@ -2355,30 +2094,6 @@ module gpio_reg_top #(
   logic intrpt_rise_status_1_intrpt_rise_status_55_qs;
   logic intrpt_rise_status_1_intrpt_rise_status_55_wd;
   logic intrpt_rise_status_1_intrpt_rise_status_55_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_56_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_56_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_56_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_57_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_57_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_57_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_58_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_58_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_58_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_59_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_59_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_59_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_60_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_60_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_60_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_61_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_61_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_61_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_62_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_62_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_62_we;
-  logic intrpt_rise_status_1_intrpt_rise_status_63_qs;
-  logic intrpt_rise_status_1_intrpt_rise_status_63_wd;
-  logic intrpt_rise_status_1_intrpt_rise_status_63_we;
   logic intrpt_fall_status_0_intrpt_fall_status_0_qs;
   logic intrpt_fall_status_0_intrpt_fall_status_0_wd;
   logic intrpt_fall_status_0_intrpt_fall_status_0_we;
@@ -2547,30 +2262,6 @@ module gpio_reg_top #(
   logic intrpt_fall_status_1_intrpt_fall_status_55_qs;
   logic intrpt_fall_status_1_intrpt_fall_status_55_wd;
   logic intrpt_fall_status_1_intrpt_fall_status_55_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_56_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_56_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_56_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_57_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_57_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_57_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_58_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_58_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_58_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_59_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_59_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_59_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_60_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_60_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_60_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_61_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_61_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_61_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_62_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_62_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_62_we;
-  logic intrpt_fall_status_1_intrpt_fall_status_63_qs;
-  logic intrpt_fall_status_1_intrpt_fall_status_63_wd;
-  logic intrpt_fall_status_1_intrpt_fall_status_63_we;
   logic intrpt_lvl_high_status_0_intrpt_lvl_high_status_0_qs;
   logic intrpt_lvl_high_status_0_intrpt_lvl_high_status_0_wd;
   logic intrpt_lvl_high_status_0_intrpt_lvl_high_status_0_we;
@@ -2739,30 +2430,6 @@ module gpio_reg_top #(
   logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_qs;
   logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_wd;
   logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_we;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_qs;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_wd;
-  logic intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_we;
   logic intrpt_lvl_low_status_0_intrpt_lvl_low_status_0_qs;
   logic intrpt_lvl_low_status_0_intrpt_lvl_low_status_0_wd;
   logic intrpt_lvl_low_status_0_intrpt_lvl_low_status_0_we;
@@ -2931,30 +2598,6 @@ module gpio_reg_top #(
   logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_qs;
   logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_wd;
   logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_we;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_qs;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_wd;
-  logic intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_we;
 
   // Register instances
   // R[info]: V(True)
@@ -2991,17 +2634,18 @@ module gpio_reg_top #(
 
   // R[cfg]: V(False)
 
+  //   F[intrpt_mode]: 0:0
   prim_subreg #(
     .DW      (1),
     .SWACCESS("RW"),
     .RESVAL  (1'h0)
-  ) u_cfg (
+  ) u_cfg_intrpt_mode (
     .clk_i   (clk_i    ),
     .rst_ni  (rst_ni  ),
 
     // from register interface
-    .we     (cfg_we),
-    .wd     (cfg_wd),
+    .we     (cfg_intrpt_mode_we),
+    .wd     (cfg_intrpt_mode_wd),
 
     // from internal hardware
     .de     (1'b0),
@@ -3009,10 +2653,36 @@ module gpio_reg_top #(
 
     // to internal hardware
     .qe     (),
-    .q      (reg2hw.cfg.q ),
+    .q      (reg2hw.cfg.intrpt_mode.q ),
 
     // to register interface (read)
-    .qs     (cfg_qs)
+    .qs     (cfg_intrpt_mode_qs)
+  );
+
+
+  //   F[reserved]: 1:1
+  prim_subreg #(
+    .DW      (1),
+    .SWACCESS("RW"),
+    .RESVAL  (1'h0)
+  ) u_cfg_reserved (
+    .clk_i   (clk_i    ),
+    .rst_ni  (rst_ni  ),
+
+    // from register interface
+    .we     (cfg_reserved_we),
+    .wd     (cfg_reserved_wd),
+
+    // from internal hardware
+    .de     (1'b0),
+    .d      ('0  ),
+
+    // to internal hardware
+    .qe     (),
+    .q      (reg2hw.cfg.reserved.q ),
+
+    // to register interface (read)
+    .qs     (cfg_reserved_qs)
   );
 
 
@@ -4485,214 +4155,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[mode_56]: 17:16
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_56_we),
-    .wd     (gpio_mode_3_mode_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[56].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_56_qs)
-  );
-
-
-  // F[mode_57]: 19:18
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_57_we),
-    .wd     (gpio_mode_3_mode_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[57].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_57_qs)
-  );
-
-
-  // F[mode_58]: 21:20
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_58_we),
-    .wd     (gpio_mode_3_mode_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[58].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_58_qs)
-  );
-
-
-  // F[mode_59]: 23:22
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_59_we),
-    .wd     (gpio_mode_3_mode_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[59].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_59_qs)
-  );
-
-
-  // F[mode_60]: 25:24
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_60_we),
-    .wd     (gpio_mode_3_mode_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[60].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_60_qs)
-  );
-
-
-  // F[mode_61]: 27:26
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_61_we),
-    .wd     (gpio_mode_3_mode_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[61].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_61_qs)
-  );
-
-
-  // F[mode_62]: 29:28
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_62_we),
-    .wd     (gpio_mode_3_mode_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[62].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_62_qs)
-  );
-
-
-  // F[mode_63]: 31:30
-  prim_subreg #(
-    .DW      (2),
-    .SWACCESS("RW"),
-    .RESVAL  (2'h0)
-  ) u_gpio_mode_3_mode_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_mode_3_mode_63_we),
-    .wd     (gpio_mode_3_mode_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_mode[63].q ),
-
-    // to register interface (read)
-    .qs     (gpio_mode_3_mode_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg gpio_en
@@ -6157,214 +5619,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[gpio_en_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_56_we),
-    .wd     (gpio_en_1_gpio_en_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[56].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_56_qs)
-  );
-
-
-  // F[gpio_en_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_57_we),
-    .wd     (gpio_en_1_gpio_en_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[57].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_57_qs)
-  );
-
-
-  // F[gpio_en_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_58_we),
-    .wd     (gpio_en_1_gpio_en_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[58].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_58_qs)
-  );
-
-
-  // F[gpio_en_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_59_we),
-    .wd     (gpio_en_1_gpio_en_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[59].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_59_qs)
-  );
-
-
-  // F[gpio_en_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_60_we),
-    .wd     (gpio_en_1_gpio_en_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[60].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_60_qs)
-  );
-
-
-  // F[gpio_en_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_61_we),
-    .wd     (gpio_en_1_gpio_en_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[61].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_61_qs)
-  );
-
-
-  // F[gpio_en_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_62_we),
-    .wd     (gpio_en_1_gpio_en_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[62].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_62_qs)
-  );
-
-
-  // F[gpio_en_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_en_1_gpio_en_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_en_1_gpio_en_63_we),
-    .wd     (gpio_en_1_gpio_en_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_en[63].q ),
-
-    // to register interface (read)
-    .qs     (gpio_en_1_gpio_en_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg gpio_in
@@ -7210,126 +6464,6 @@ module gpio_reg_top #(
     .qe     (),
     .q      (),
     .qs     (gpio_in_1_gpio_in_55_qs)
-  );
-
-
-  // F[gpio_in_56]: 24:24
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_56 (
-    .re     (gpio_in_1_gpio_in_56_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[56].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_56_qs)
-  );
-
-
-  // F[gpio_in_57]: 25:25
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_57 (
-    .re     (gpio_in_1_gpio_in_57_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[57].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_57_qs)
-  );
-
-
-  // F[gpio_in_58]: 26:26
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_58 (
-    .re     (gpio_in_1_gpio_in_58_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[58].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_58_qs)
-  );
-
-
-  // F[gpio_in_59]: 27:27
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_59 (
-    .re     (gpio_in_1_gpio_in_59_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[59].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_59_qs)
-  );
-
-
-  // F[gpio_in_60]: 28:28
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_60 (
-    .re     (gpio_in_1_gpio_in_60_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[60].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_60_qs)
-  );
-
-
-  // F[gpio_in_61]: 29:29
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_61 (
-    .re     (gpio_in_1_gpio_in_61_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[61].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_61_qs)
-  );
-
-
-  // F[gpio_in_62]: 30:30
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_62 (
-    .re     (gpio_in_1_gpio_in_62_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[62].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_62_qs)
-  );
-
-
-  // F[gpio_in_63]: 31:31
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_in_1_gpio_in_63 (
-    .re     (gpio_in_1_gpio_in_63_re),
-    .we     (1'b0),
-    .wd     ('0),
-    .d      (hw2reg.gpio_in[63].d),
-    .qre    (),
-    .qe     (),
-    .q      (),
-    .qs     (gpio_in_1_gpio_in_63_qs)
   );
 
 
@@ -8797,214 +7931,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[gpio_out_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_56_we),
-    .wd     (gpio_out_1_gpio_out_56_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[56].de),
-    .d      (hw2reg.gpio_out[56].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[56].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_56_qs)
-  );
-
-
-  // F[gpio_out_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_57_we),
-    .wd     (gpio_out_1_gpio_out_57_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[57].de),
-    .d      (hw2reg.gpio_out[57].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[57].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_57_qs)
-  );
-
-
-  // F[gpio_out_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_58_we),
-    .wd     (gpio_out_1_gpio_out_58_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[58].de),
-    .d      (hw2reg.gpio_out[58].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[58].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_58_qs)
-  );
-
-
-  // F[gpio_out_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_59_we),
-    .wd     (gpio_out_1_gpio_out_59_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[59].de),
-    .d      (hw2reg.gpio_out[59].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[59].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_59_qs)
-  );
-
-
-  // F[gpio_out_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_60_we),
-    .wd     (gpio_out_1_gpio_out_60_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[60].de),
-    .d      (hw2reg.gpio_out[60].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[60].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_60_qs)
-  );
-
-
-  // F[gpio_out_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_61_we),
-    .wd     (gpio_out_1_gpio_out_61_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[61].de),
-    .d      (hw2reg.gpio_out[61].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[61].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_61_qs)
-  );
-
-
-  // F[gpio_out_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_62_we),
-    .wd     (gpio_out_1_gpio_out_62_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[62].de),
-    .d      (hw2reg.gpio_out[62].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[62].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_62_qs)
-  );
-
-
-  // F[gpio_out_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_gpio_out_1_gpio_out_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (gpio_out_1_gpio_out_63_we),
-    .wd     (gpio_out_1_gpio_out_63_wd),
-
-    // from internal hardware
-    .de     (hw2reg.gpio_out[63].de),
-    .d      (hw2reg.gpio_out[63].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.gpio_out[63].q ),
-
-    // to register interface (read)
-    .qs     (gpio_out_1_gpio_out_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg gpio_set
@@ -9849,126 +8775,6 @@ module gpio_reg_top #(
     .qre    (),
     .qe     (reg2hw.gpio_set[55].qe),
     .q      (reg2hw.gpio_set[55].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_56]: 24:24
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_56 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_56_we),
-    .wd     (gpio_set_1_gpio_set_56_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[56].qe),
-    .q      (reg2hw.gpio_set[56].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_57]: 25:25
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_57 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_57_we),
-    .wd     (gpio_set_1_gpio_set_57_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[57].qe),
-    .q      (reg2hw.gpio_set[57].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_58]: 26:26
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_58 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_58_we),
-    .wd     (gpio_set_1_gpio_set_58_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[58].qe),
-    .q      (reg2hw.gpio_set[58].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_59]: 27:27
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_59 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_59_we),
-    .wd     (gpio_set_1_gpio_set_59_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[59].qe),
-    .q      (reg2hw.gpio_set[59].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_60]: 28:28
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_60 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_60_we),
-    .wd     (gpio_set_1_gpio_set_60_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[60].qe),
-    .q      (reg2hw.gpio_set[60].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_61]: 29:29
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_61 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_61_we),
-    .wd     (gpio_set_1_gpio_set_61_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[61].qe),
-    .q      (reg2hw.gpio_set[61].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_62]: 30:30
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_62 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_62_we),
-    .wd     (gpio_set_1_gpio_set_62_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[62].qe),
-    .q      (reg2hw.gpio_set[62].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_set_63]: 31:31
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_set_1_gpio_set_63 (
-    .re     (1'b0),
-    .we     (gpio_set_1_gpio_set_63_we),
-    .wd     (gpio_set_1_gpio_set_63_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_set[63].qe),
-    .q      (reg2hw.gpio_set[63].q ),
     .qs     ()
   );
 
@@ -10821,126 +9627,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[gpio_clear_56]: 24:24
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_56 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_56_we),
-    .wd     (gpio_clear_1_gpio_clear_56_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[56].qe),
-    .q      (reg2hw.gpio_clear[56].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_57]: 25:25
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_57 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_57_we),
-    .wd     (gpio_clear_1_gpio_clear_57_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[57].qe),
-    .q      (reg2hw.gpio_clear[57].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_58]: 26:26
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_58 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_58_we),
-    .wd     (gpio_clear_1_gpio_clear_58_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[58].qe),
-    .q      (reg2hw.gpio_clear[58].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_59]: 27:27
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_59 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_59_we),
-    .wd     (gpio_clear_1_gpio_clear_59_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[59].qe),
-    .q      (reg2hw.gpio_clear[59].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_60]: 28:28
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_60 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_60_we),
-    .wd     (gpio_clear_1_gpio_clear_60_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[60].qe),
-    .q      (reg2hw.gpio_clear[60].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_61]: 29:29
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_61 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_61_we),
-    .wd     (gpio_clear_1_gpio_clear_61_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[61].qe),
-    .q      (reg2hw.gpio_clear[61].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_62]: 30:30
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_62 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_62_we),
-    .wd     (gpio_clear_1_gpio_clear_62_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[62].qe),
-    .q      (reg2hw.gpio_clear[62].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_clear_63]: 31:31
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_clear_1_gpio_clear_63 (
-    .re     (1'b0),
-    .we     (gpio_clear_1_gpio_clear_63_we),
-    .wd     (gpio_clear_1_gpio_clear_63_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_clear[63].qe),
-    .q      (reg2hw.gpio_clear[63].q ),
-    .qs     ()
-  );
-
-
 
 
   // Subregister 0 of Multireg gpio_toggle
@@ -11785,126 +10471,6 @@ module gpio_reg_top #(
     .qre    (),
     .qe     (reg2hw.gpio_toggle[55].qe),
     .q      (reg2hw.gpio_toggle[55].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_56]: 24:24
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_56 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_56_we),
-    .wd     (gpio_toggle_1_gpio_toggle_56_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[56].qe),
-    .q      (reg2hw.gpio_toggle[56].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_57]: 25:25
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_57 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_57_we),
-    .wd     (gpio_toggle_1_gpio_toggle_57_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[57].qe),
-    .q      (reg2hw.gpio_toggle[57].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_58]: 26:26
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_58 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_58_we),
-    .wd     (gpio_toggle_1_gpio_toggle_58_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[58].qe),
-    .q      (reg2hw.gpio_toggle[58].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_59]: 27:27
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_59 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_59_we),
-    .wd     (gpio_toggle_1_gpio_toggle_59_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[59].qe),
-    .q      (reg2hw.gpio_toggle[59].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_60]: 28:28
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_60 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_60_we),
-    .wd     (gpio_toggle_1_gpio_toggle_60_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[60].qe),
-    .q      (reg2hw.gpio_toggle[60].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_61]: 29:29
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_61 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_61_we),
-    .wd     (gpio_toggle_1_gpio_toggle_61_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[61].qe),
-    .q      (reg2hw.gpio_toggle[61].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_62]: 30:30
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_62 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_62_we),
-    .wd     (gpio_toggle_1_gpio_toggle_62_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[62].qe),
-    .q      (reg2hw.gpio_toggle[62].q ),
-    .qs     ()
-  );
-
-
-  // F[gpio_toggle_63]: 31:31
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_gpio_toggle_1_gpio_toggle_63 (
-    .re     (1'b0),
-    .we     (gpio_toggle_1_gpio_toggle_63_we),
-    .wd     (gpio_toggle_1_gpio_toggle_63_wd),
-    .d      ('0),
-    .qre    (),
-    .qe     (reg2hw.gpio_toggle[63].qe),
-    .q      (reg2hw.gpio_toggle[63].q ),
     .qs     ()
   );
 
@@ -13373,214 +11939,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_rise_en_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_56_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_56_qs)
-  );
-
-
-  // F[intrpt_rise_en_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_57_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_57_qs)
-  );
-
-
-  // F[intrpt_rise_en_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_58_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_58_qs)
-  );
-
-
-  // F[intrpt_rise_en_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_59_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_59_qs)
-  );
-
-
-  // F[intrpt_rise_en_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_60_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_60_qs)
-  );
-
-
-  // F[intrpt_rise_en_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_61_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_61_qs)
-  );
-
-
-  // F[intrpt_rise_en_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_62_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_62_qs)
-  );
-
-
-  // F[intrpt_rise_en_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_en_1_intrpt_rise_en_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_en_1_intrpt_rise_en_63_we),
-    .wd     (intrpt_rise_en_1_intrpt_rise_en_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_en[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_en_1_intrpt_rise_en_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg intrpt_fall_en
@@ -15042,214 +13400,6 @@ module gpio_reg_top #(
 
     // to register interface (read)
     .qs     (intrpt_fall_en_1_intrpt_fall_en_55_qs)
-  );
-
-
-  // F[intrpt_fall_en_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_56_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_56_qs)
-  );
-
-
-  // F[intrpt_fall_en_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_57_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_57_qs)
-  );
-
-
-  // F[intrpt_fall_en_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_58_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_58_qs)
-  );
-
-
-  // F[intrpt_fall_en_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_59_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_59_qs)
-  );
-
-
-  // F[intrpt_fall_en_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_60_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_60_qs)
-  );
-
-
-  // F[intrpt_fall_en_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_61_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_61_qs)
-  );
-
-
-  // F[intrpt_fall_en_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_62_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_62_qs)
-  );
-
-
-  // F[intrpt_fall_en_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_en_1_intrpt_fall_en_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_en_1_intrpt_fall_en_63_we),
-    .wd     (intrpt_fall_en_1_intrpt_fall_en_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_en[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_en_1_intrpt_fall_en_63_qs)
   );
 
 
@@ -16717,214 +14867,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_lvl_high_en_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_qs)
-  );
-
-
-  // F[intrpt_lvl_high_en_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_en_1_intrpt_lvl_high_en_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_we),
-    .wd     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_en[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg intrpt_lvl_low_en
@@ -18389,214 +16331,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_lvl_low_en_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_qs)
-  );
-
-
-  // F[intrpt_lvl_low_en_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_en_1_intrpt_lvl_low_en_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_we),
-    .wd     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_en[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg intrpt_status
@@ -19442,126 +17176,6 @@ module gpio_reg_top #(
     .qe     (reg2hw.intrpt_status[55].qe),
     .q      (reg2hw.intrpt_status[55].q ),
     .qs     (intrpt_status_1_intrpt_status_55_qs)
-  );
-
-
-  // F[intrpt_status_56]: 24:24
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_56 (
-    .re     (intrpt_status_1_intrpt_status_56_re),
-    .we     (intrpt_status_1_intrpt_status_56_we),
-    .wd     (intrpt_status_1_intrpt_status_56_wd),
-    .d      (hw2reg.intrpt_status[56].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[56].qe),
-    .q      (reg2hw.intrpt_status[56].q ),
-    .qs     (intrpt_status_1_intrpt_status_56_qs)
-  );
-
-
-  // F[intrpt_status_57]: 25:25
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_57 (
-    .re     (intrpt_status_1_intrpt_status_57_re),
-    .we     (intrpt_status_1_intrpt_status_57_we),
-    .wd     (intrpt_status_1_intrpt_status_57_wd),
-    .d      (hw2reg.intrpt_status[57].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[57].qe),
-    .q      (reg2hw.intrpt_status[57].q ),
-    .qs     (intrpt_status_1_intrpt_status_57_qs)
-  );
-
-
-  // F[intrpt_status_58]: 26:26
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_58 (
-    .re     (intrpt_status_1_intrpt_status_58_re),
-    .we     (intrpt_status_1_intrpt_status_58_we),
-    .wd     (intrpt_status_1_intrpt_status_58_wd),
-    .d      (hw2reg.intrpt_status[58].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[58].qe),
-    .q      (reg2hw.intrpt_status[58].q ),
-    .qs     (intrpt_status_1_intrpt_status_58_qs)
-  );
-
-
-  // F[intrpt_status_59]: 27:27
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_59 (
-    .re     (intrpt_status_1_intrpt_status_59_re),
-    .we     (intrpt_status_1_intrpt_status_59_we),
-    .wd     (intrpt_status_1_intrpt_status_59_wd),
-    .d      (hw2reg.intrpt_status[59].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[59].qe),
-    .q      (reg2hw.intrpt_status[59].q ),
-    .qs     (intrpt_status_1_intrpt_status_59_qs)
-  );
-
-
-  // F[intrpt_status_60]: 28:28
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_60 (
-    .re     (intrpt_status_1_intrpt_status_60_re),
-    .we     (intrpt_status_1_intrpt_status_60_we),
-    .wd     (intrpt_status_1_intrpt_status_60_wd),
-    .d      (hw2reg.intrpt_status[60].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[60].qe),
-    .q      (reg2hw.intrpt_status[60].q ),
-    .qs     (intrpt_status_1_intrpt_status_60_qs)
-  );
-
-
-  // F[intrpt_status_61]: 29:29
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_61 (
-    .re     (intrpt_status_1_intrpt_status_61_re),
-    .we     (intrpt_status_1_intrpt_status_61_we),
-    .wd     (intrpt_status_1_intrpt_status_61_wd),
-    .d      (hw2reg.intrpt_status[61].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[61].qe),
-    .q      (reg2hw.intrpt_status[61].q ),
-    .qs     (intrpt_status_1_intrpt_status_61_qs)
-  );
-
-
-  // F[intrpt_status_62]: 30:30
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_62 (
-    .re     (intrpt_status_1_intrpt_status_62_re),
-    .we     (intrpt_status_1_intrpt_status_62_we),
-    .wd     (intrpt_status_1_intrpt_status_62_wd),
-    .d      (hw2reg.intrpt_status[62].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[62].qe),
-    .q      (reg2hw.intrpt_status[62].q ),
-    .qs     (intrpt_status_1_intrpt_status_62_qs)
-  );
-
-
-  // F[intrpt_status_63]: 31:31
-  prim_subreg_ext #(
-    .DW    (1)
-  ) u_intrpt_status_1_intrpt_status_63 (
-    .re     (intrpt_status_1_intrpt_status_63_re),
-    .we     (intrpt_status_1_intrpt_status_63_we),
-    .wd     (intrpt_status_1_intrpt_status_63_wd),
-    .d      (hw2reg.intrpt_status[63].d),
-    .qre    (),
-    .qe     (reg2hw.intrpt_status[63].qe),
-    .q      (reg2hw.intrpt_status[63].q ),
-    .qs     (intrpt_status_1_intrpt_status_63_qs)
   );
 
 
@@ -21029,214 +18643,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_rise_status_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_56_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_56_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[56].de),
-    .d      (hw2reg.intrpt_rise_status[56].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_56_qs)
-  );
-
-
-  // F[intrpt_rise_status_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_57_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_57_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[57].de),
-    .d      (hw2reg.intrpt_rise_status[57].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_57_qs)
-  );
-
-
-  // F[intrpt_rise_status_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_58_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_58_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[58].de),
-    .d      (hw2reg.intrpt_rise_status[58].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_58_qs)
-  );
-
-
-  // F[intrpt_rise_status_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_59_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_59_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[59].de),
-    .d      (hw2reg.intrpt_rise_status[59].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_59_qs)
-  );
-
-
-  // F[intrpt_rise_status_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_60_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_60_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[60].de),
-    .d      (hw2reg.intrpt_rise_status[60].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_60_qs)
-  );
-
-
-  // F[intrpt_rise_status_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_61_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_61_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[61].de),
-    .d      (hw2reg.intrpt_rise_status[61].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_61_qs)
-  );
-
-
-  // F[intrpt_rise_status_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_62_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_62_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[62].de),
-    .d      (hw2reg.intrpt_rise_status[62].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_62_qs)
-  );
-
-
-  // F[intrpt_rise_status_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_rise_status_1_intrpt_rise_status_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_rise_status_1_intrpt_rise_status_63_we),
-    .wd     (intrpt_rise_status_1_intrpt_rise_status_63_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_rise_status[63].de),
-    .d      (hw2reg.intrpt_rise_status[63].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_rise_status[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_rise_status_1_intrpt_rise_status_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg intrpt_fall_status
@@ -22698,214 +20104,6 @@ module gpio_reg_top #(
 
     // to register interface (read)
     .qs     (intrpt_fall_status_1_intrpt_fall_status_55_qs)
-  );
-
-
-  // F[intrpt_fall_status_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_56_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_56_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[56].de),
-    .d      (hw2reg.intrpt_fall_status[56].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_56_qs)
-  );
-
-
-  // F[intrpt_fall_status_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_57_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_57_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[57].de),
-    .d      (hw2reg.intrpt_fall_status[57].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_57_qs)
-  );
-
-
-  // F[intrpt_fall_status_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_58_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_58_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[58].de),
-    .d      (hw2reg.intrpt_fall_status[58].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_58_qs)
-  );
-
-
-  // F[intrpt_fall_status_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_59_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_59_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[59].de),
-    .d      (hw2reg.intrpt_fall_status[59].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_59_qs)
-  );
-
-
-  // F[intrpt_fall_status_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_60_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_60_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[60].de),
-    .d      (hw2reg.intrpt_fall_status[60].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_60_qs)
-  );
-
-
-  // F[intrpt_fall_status_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_61_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_61_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[61].de),
-    .d      (hw2reg.intrpt_fall_status[61].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_61_qs)
-  );
-
-
-  // F[intrpt_fall_status_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_62_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_62_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[62].de),
-    .d      (hw2reg.intrpt_fall_status[62].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_62_qs)
-  );
-
-
-  // F[intrpt_fall_status_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_fall_status_1_intrpt_fall_status_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_fall_status_1_intrpt_fall_status_63_we),
-    .wd     (intrpt_fall_status_1_intrpt_fall_status_63_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_fall_status[63].de),
-    .d      (hw2reg.intrpt_fall_status[63].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_fall_status[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_fall_status_1_intrpt_fall_status_63_qs)
   );
 
 
@@ -24373,214 +21571,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_lvl_high_status_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[56].de),
-    .d      (hw2reg.intrpt_lvl_high_status[56].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[57].de),
-    .d      (hw2reg.intrpt_lvl_high_status[57].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[58].de),
-    .d      (hw2reg.intrpt_lvl_high_status[58].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[59].de),
-    .d      (hw2reg.intrpt_lvl_high_status[59].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[60].de),
-    .d      (hw2reg.intrpt_lvl_high_status[60].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[61].de),
-    .d      (hw2reg.intrpt_lvl_high_status[61].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[62].de),
-    .d      (hw2reg.intrpt_lvl_high_status[62].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_qs)
-  );
-
-
-  // F[intrpt_lvl_high_status_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_high_status_1_intrpt_lvl_high_status_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_we),
-    .wd     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_high_status[63].de),
-    .d      (hw2reg.intrpt_lvl_high_status[63].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_high_status[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_qs)
-  );
-
-
 
 
   // Subregister 0 of Multireg intrpt_lvl_low_status
@@ -26045,214 +23035,6 @@ module gpio_reg_top #(
   );
 
 
-  // F[intrpt_lvl_low_status_56]: 24:24
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_56 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[56].de),
-    .d      (hw2reg.intrpt_lvl_low_status[56].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[56].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_57]: 25:25
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_57 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[57].de),
-    .d      (hw2reg.intrpt_lvl_low_status[57].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[57].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_58]: 26:26
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_58 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[58].de),
-    .d      (hw2reg.intrpt_lvl_low_status[58].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[58].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_59]: 27:27
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_59 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[59].de),
-    .d      (hw2reg.intrpt_lvl_low_status[59].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[59].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_60]: 28:28
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_60 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[60].de),
-    .d      (hw2reg.intrpt_lvl_low_status[60].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[60].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_61]: 29:29
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_61 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[61].de),
-    .d      (hw2reg.intrpt_lvl_low_status[61].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[61].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_62]: 30:30
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_62 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[62].de),
-    .d      (hw2reg.intrpt_lvl_low_status[62].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[62].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_qs)
-  );
-
-
-  // F[intrpt_lvl_low_status_63]: 31:31
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("W1C"),
-    .RESVAL  (1'h0)
-  ) u_intrpt_lvl_low_status_1_intrpt_lvl_low_status_63 (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_we),
-    .wd     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_wd),
-
-    // from internal hardware
-    .de     (hw2reg.intrpt_lvl_low_status[63].de),
-    .d      (hw2reg.intrpt_lvl_low_status[63].d ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.intrpt_lvl_low_status[63].q ),
-
-    // to register interface (read)
-    .qs     (intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_qs)
-  );
-
-
 
 
 
@@ -26344,8 +23126,11 @@ module gpio_reg_top #(
 
   assign info_version_re = addr_hit[0] & reg_re & !reg_error;
 
-  assign cfg_we = addr_hit[1] & reg_we & !reg_error;
-  assign cfg_wd = reg_wdata[0];
+  assign cfg_intrpt_mode_we = addr_hit[1] & reg_we & !reg_error;
+  assign cfg_intrpt_mode_wd = reg_wdata[0];
+
+  assign cfg_reserved_we = addr_hit[1] & reg_we & !reg_error;
+  assign cfg_reserved_wd = reg_wdata[1];
 
   assign gpio_mode_0_mode_0_we = addr_hit[2] & reg_we & !reg_error;
   assign gpio_mode_0_mode_0_wd = reg_wdata[1:0];
@@ -26515,30 +23300,6 @@ module gpio_reg_top #(
   assign gpio_mode_3_mode_55_we = addr_hit[5] & reg_we & !reg_error;
   assign gpio_mode_3_mode_55_wd = reg_wdata[15:14];
 
-  assign gpio_mode_3_mode_56_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_56_wd = reg_wdata[17:16];
-
-  assign gpio_mode_3_mode_57_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_57_wd = reg_wdata[19:18];
-
-  assign gpio_mode_3_mode_58_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_58_wd = reg_wdata[21:20];
-
-  assign gpio_mode_3_mode_59_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_59_wd = reg_wdata[23:22];
-
-  assign gpio_mode_3_mode_60_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_60_wd = reg_wdata[25:24];
-
-  assign gpio_mode_3_mode_61_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_61_wd = reg_wdata[27:26];
-
-  assign gpio_mode_3_mode_62_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_62_wd = reg_wdata[29:28];
-
-  assign gpio_mode_3_mode_63_we = addr_hit[5] & reg_we & !reg_error;
-  assign gpio_mode_3_mode_63_wd = reg_wdata[31:30];
-
   assign gpio_en_0_gpio_en_0_we = addr_hit[6] & reg_we & !reg_error;
   assign gpio_en_0_gpio_en_0_wd = reg_wdata[0];
 
@@ -26707,30 +23468,6 @@ module gpio_reg_top #(
   assign gpio_en_1_gpio_en_55_we = addr_hit[7] & reg_we & !reg_error;
   assign gpio_en_1_gpio_en_55_wd = reg_wdata[23];
 
-  assign gpio_en_1_gpio_en_56_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_56_wd = reg_wdata[24];
-
-  assign gpio_en_1_gpio_en_57_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_57_wd = reg_wdata[25];
-
-  assign gpio_en_1_gpio_en_58_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_58_wd = reg_wdata[26];
-
-  assign gpio_en_1_gpio_en_59_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_59_wd = reg_wdata[27];
-
-  assign gpio_en_1_gpio_en_60_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_60_wd = reg_wdata[28];
-
-  assign gpio_en_1_gpio_en_61_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_61_wd = reg_wdata[29];
-
-  assign gpio_en_1_gpio_en_62_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_62_wd = reg_wdata[30];
-
-  assign gpio_en_1_gpio_en_63_we = addr_hit[7] & reg_we & !reg_error;
-  assign gpio_en_1_gpio_en_63_wd = reg_wdata[31];
-
   assign gpio_in_0_gpio_in_0_re = addr_hit[8] & reg_re & !reg_error;
 
   assign gpio_in_0_gpio_in_1_re = addr_hit[8] & reg_re & !reg_error;
@@ -26842,22 +23579,6 @@ module gpio_reg_top #(
   assign gpio_in_1_gpio_in_54_re = addr_hit[9] & reg_re & !reg_error;
 
   assign gpio_in_1_gpio_in_55_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_56_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_57_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_58_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_59_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_60_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_61_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_62_re = addr_hit[9] & reg_re & !reg_error;
-
-  assign gpio_in_1_gpio_in_63_re = addr_hit[9] & reg_re & !reg_error;
 
   assign gpio_out_0_gpio_out_0_we = addr_hit[10] & reg_we & !reg_error;
   assign gpio_out_0_gpio_out_0_wd = reg_wdata[0];
@@ -27027,30 +23748,6 @@ module gpio_reg_top #(
   assign gpio_out_1_gpio_out_55_we = addr_hit[11] & reg_we & !reg_error;
   assign gpio_out_1_gpio_out_55_wd = reg_wdata[23];
 
-  assign gpio_out_1_gpio_out_56_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_56_wd = reg_wdata[24];
-
-  assign gpio_out_1_gpio_out_57_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_57_wd = reg_wdata[25];
-
-  assign gpio_out_1_gpio_out_58_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_58_wd = reg_wdata[26];
-
-  assign gpio_out_1_gpio_out_59_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_59_wd = reg_wdata[27];
-
-  assign gpio_out_1_gpio_out_60_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_60_wd = reg_wdata[28];
-
-  assign gpio_out_1_gpio_out_61_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_61_wd = reg_wdata[29];
-
-  assign gpio_out_1_gpio_out_62_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_62_wd = reg_wdata[30];
-
-  assign gpio_out_1_gpio_out_63_we = addr_hit[11] & reg_we & !reg_error;
-  assign gpio_out_1_gpio_out_63_wd = reg_wdata[31];
-
   assign gpio_set_0_gpio_set_0_we = addr_hit[12] & reg_we & !reg_error;
   assign gpio_set_0_gpio_set_0_wd = reg_wdata[0];
 
@@ -27218,30 +23915,6 @@ module gpio_reg_top #(
 
   assign gpio_set_1_gpio_set_55_we = addr_hit[13] & reg_we & !reg_error;
   assign gpio_set_1_gpio_set_55_wd = reg_wdata[23];
-
-  assign gpio_set_1_gpio_set_56_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_56_wd = reg_wdata[24];
-
-  assign gpio_set_1_gpio_set_57_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_57_wd = reg_wdata[25];
-
-  assign gpio_set_1_gpio_set_58_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_58_wd = reg_wdata[26];
-
-  assign gpio_set_1_gpio_set_59_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_59_wd = reg_wdata[27];
-
-  assign gpio_set_1_gpio_set_60_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_60_wd = reg_wdata[28];
-
-  assign gpio_set_1_gpio_set_61_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_61_wd = reg_wdata[29];
-
-  assign gpio_set_1_gpio_set_62_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_62_wd = reg_wdata[30];
-
-  assign gpio_set_1_gpio_set_63_we = addr_hit[13] & reg_we & !reg_error;
-  assign gpio_set_1_gpio_set_63_wd = reg_wdata[31];
 
   assign gpio_clear_0_gpio_clear_0_we = addr_hit[14] & reg_we & !reg_error;
   assign gpio_clear_0_gpio_clear_0_wd = reg_wdata[0];
@@ -27411,30 +24084,6 @@ module gpio_reg_top #(
   assign gpio_clear_1_gpio_clear_55_we = addr_hit[15] & reg_we & !reg_error;
   assign gpio_clear_1_gpio_clear_55_wd = reg_wdata[23];
 
-  assign gpio_clear_1_gpio_clear_56_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_56_wd = reg_wdata[24];
-
-  assign gpio_clear_1_gpio_clear_57_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_57_wd = reg_wdata[25];
-
-  assign gpio_clear_1_gpio_clear_58_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_58_wd = reg_wdata[26];
-
-  assign gpio_clear_1_gpio_clear_59_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_59_wd = reg_wdata[27];
-
-  assign gpio_clear_1_gpio_clear_60_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_60_wd = reg_wdata[28];
-
-  assign gpio_clear_1_gpio_clear_61_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_61_wd = reg_wdata[29];
-
-  assign gpio_clear_1_gpio_clear_62_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_62_wd = reg_wdata[30];
-
-  assign gpio_clear_1_gpio_clear_63_we = addr_hit[15] & reg_we & !reg_error;
-  assign gpio_clear_1_gpio_clear_63_wd = reg_wdata[31];
-
   assign gpio_toggle_0_gpio_toggle_0_we = addr_hit[16] & reg_we & !reg_error;
   assign gpio_toggle_0_gpio_toggle_0_wd = reg_wdata[0];
 
@@ -27602,30 +24251,6 @@ module gpio_reg_top #(
 
   assign gpio_toggle_1_gpio_toggle_55_we = addr_hit[17] & reg_we & !reg_error;
   assign gpio_toggle_1_gpio_toggle_55_wd = reg_wdata[23];
-
-  assign gpio_toggle_1_gpio_toggle_56_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_56_wd = reg_wdata[24];
-
-  assign gpio_toggle_1_gpio_toggle_57_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_57_wd = reg_wdata[25];
-
-  assign gpio_toggle_1_gpio_toggle_58_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_58_wd = reg_wdata[26];
-
-  assign gpio_toggle_1_gpio_toggle_59_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_59_wd = reg_wdata[27];
-
-  assign gpio_toggle_1_gpio_toggle_60_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_60_wd = reg_wdata[28];
-
-  assign gpio_toggle_1_gpio_toggle_61_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_61_wd = reg_wdata[29];
-
-  assign gpio_toggle_1_gpio_toggle_62_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_62_wd = reg_wdata[30];
-
-  assign gpio_toggle_1_gpio_toggle_63_we = addr_hit[17] & reg_we & !reg_error;
-  assign gpio_toggle_1_gpio_toggle_63_wd = reg_wdata[31];
 
   assign intrpt_rise_en_0_intrpt_rise_en_0_we = addr_hit[18] & reg_we & !reg_error;
   assign intrpt_rise_en_0_intrpt_rise_en_0_wd = reg_wdata[0];
@@ -27795,30 +24420,6 @@ module gpio_reg_top #(
   assign intrpt_rise_en_1_intrpt_rise_en_55_we = addr_hit[19] & reg_we & !reg_error;
   assign intrpt_rise_en_1_intrpt_rise_en_55_wd = reg_wdata[23];
 
-  assign intrpt_rise_en_1_intrpt_rise_en_56_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_56_wd = reg_wdata[24];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_57_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_57_wd = reg_wdata[25];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_58_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_58_wd = reg_wdata[26];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_59_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_59_wd = reg_wdata[27];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_60_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_60_wd = reg_wdata[28];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_61_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_61_wd = reg_wdata[29];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_62_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_62_wd = reg_wdata[30];
-
-  assign intrpt_rise_en_1_intrpt_rise_en_63_we = addr_hit[19] & reg_we & !reg_error;
-  assign intrpt_rise_en_1_intrpt_rise_en_63_wd = reg_wdata[31];
-
   assign intrpt_fall_en_0_intrpt_fall_en_0_we = addr_hit[20] & reg_we & !reg_error;
   assign intrpt_fall_en_0_intrpt_fall_en_0_wd = reg_wdata[0];
 
@@ -27986,30 +24587,6 @@ module gpio_reg_top #(
 
   assign intrpt_fall_en_1_intrpt_fall_en_55_we = addr_hit[21] & reg_we & !reg_error;
   assign intrpt_fall_en_1_intrpt_fall_en_55_wd = reg_wdata[23];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_56_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_56_wd = reg_wdata[24];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_57_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_57_wd = reg_wdata[25];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_58_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_58_wd = reg_wdata[26];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_59_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_59_wd = reg_wdata[27];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_60_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_60_wd = reg_wdata[28];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_61_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_61_wd = reg_wdata[29];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_62_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_62_wd = reg_wdata[30];
-
-  assign intrpt_fall_en_1_intrpt_fall_en_63_we = addr_hit[21] & reg_we & !reg_error;
-  assign intrpt_fall_en_1_intrpt_fall_en_63_wd = reg_wdata[31];
 
   assign intrpt_lvl_high_en_0_intrpt_lvl_high_en_0_we = addr_hit[22] & reg_we & !reg_error;
   assign intrpt_lvl_high_en_0_intrpt_lvl_high_en_0_wd = reg_wdata[0];
@@ -28179,30 +24756,6 @@ module gpio_reg_top #(
   assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_we = addr_hit[23] & reg_we & !reg_error;
   assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_wd = reg_wdata[23];
 
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_wd = reg_wdata[24];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_wd = reg_wdata[25];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_wd = reg_wdata[26];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_wd = reg_wdata[27];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_wd = reg_wdata[28];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_wd = reg_wdata[29];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_wd = reg_wdata[30];
-
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_we = addr_hit[23] & reg_we & !reg_error;
-  assign intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_wd = reg_wdata[31];
-
   assign intrpt_lvl_low_en_0_intrpt_lvl_low_en_0_we = addr_hit[24] & reg_we & !reg_error;
   assign intrpt_lvl_low_en_0_intrpt_lvl_low_en_0_wd = reg_wdata[0];
 
@@ -28370,30 +24923,6 @@ module gpio_reg_top #(
 
   assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_we = addr_hit[25] & reg_we & !reg_error;
   assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_wd = reg_wdata[23];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_wd = reg_wdata[24];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_wd = reg_wdata[25];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_wd = reg_wdata[26];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_wd = reg_wdata[27];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_wd = reg_wdata[28];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_wd = reg_wdata[29];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_wd = reg_wdata[30];
-
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_we = addr_hit[25] & reg_we & !reg_error;
-  assign intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_wd = reg_wdata[31];
 
   assign intrpt_status_0_intrpt_status_0_we = addr_hit[26] & reg_we & !reg_error;
   assign intrpt_status_0_intrpt_status_0_wd = reg_wdata[0];
@@ -28619,38 +25148,6 @@ module gpio_reg_top #(
   assign intrpt_status_1_intrpt_status_55_wd = reg_wdata[23];
   assign intrpt_status_1_intrpt_status_55_re = addr_hit[27] & reg_re & !reg_error;
 
-  assign intrpt_status_1_intrpt_status_56_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_56_wd = reg_wdata[24];
-  assign intrpt_status_1_intrpt_status_56_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_57_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_57_wd = reg_wdata[25];
-  assign intrpt_status_1_intrpt_status_57_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_58_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_58_wd = reg_wdata[26];
-  assign intrpt_status_1_intrpt_status_58_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_59_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_59_wd = reg_wdata[27];
-  assign intrpt_status_1_intrpt_status_59_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_60_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_60_wd = reg_wdata[28];
-  assign intrpt_status_1_intrpt_status_60_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_61_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_61_wd = reg_wdata[29];
-  assign intrpt_status_1_intrpt_status_61_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_62_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_62_wd = reg_wdata[30];
-  assign intrpt_status_1_intrpt_status_62_re = addr_hit[27] & reg_re & !reg_error;
-
-  assign intrpt_status_1_intrpt_status_63_we = addr_hit[27] & reg_we & !reg_error;
-  assign intrpt_status_1_intrpt_status_63_wd = reg_wdata[31];
-  assign intrpt_status_1_intrpt_status_63_re = addr_hit[27] & reg_re & !reg_error;
-
   assign intrpt_rise_status_0_intrpt_rise_status_0_we = addr_hit[28] & reg_we & !reg_error;
   assign intrpt_rise_status_0_intrpt_rise_status_0_wd = reg_wdata[0];
 
@@ -28818,30 +25315,6 @@ module gpio_reg_top #(
 
   assign intrpt_rise_status_1_intrpt_rise_status_55_we = addr_hit[29] & reg_we & !reg_error;
   assign intrpt_rise_status_1_intrpt_rise_status_55_wd = reg_wdata[23];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_56_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_56_wd = reg_wdata[24];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_57_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_57_wd = reg_wdata[25];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_58_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_58_wd = reg_wdata[26];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_59_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_59_wd = reg_wdata[27];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_60_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_60_wd = reg_wdata[28];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_61_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_61_wd = reg_wdata[29];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_62_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_62_wd = reg_wdata[30];
-
-  assign intrpt_rise_status_1_intrpt_rise_status_63_we = addr_hit[29] & reg_we & !reg_error;
-  assign intrpt_rise_status_1_intrpt_rise_status_63_wd = reg_wdata[31];
 
   assign intrpt_fall_status_0_intrpt_fall_status_0_we = addr_hit[30] & reg_we & !reg_error;
   assign intrpt_fall_status_0_intrpt_fall_status_0_wd = reg_wdata[0];
@@ -29011,30 +25484,6 @@ module gpio_reg_top #(
   assign intrpt_fall_status_1_intrpt_fall_status_55_we = addr_hit[31] & reg_we & !reg_error;
   assign intrpt_fall_status_1_intrpt_fall_status_55_wd = reg_wdata[23];
 
-  assign intrpt_fall_status_1_intrpt_fall_status_56_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_56_wd = reg_wdata[24];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_57_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_57_wd = reg_wdata[25];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_58_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_58_wd = reg_wdata[26];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_59_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_59_wd = reg_wdata[27];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_60_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_60_wd = reg_wdata[28];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_61_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_61_wd = reg_wdata[29];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_62_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_62_wd = reg_wdata[30];
-
-  assign intrpt_fall_status_1_intrpt_fall_status_63_we = addr_hit[31] & reg_we & !reg_error;
-  assign intrpt_fall_status_1_intrpt_fall_status_63_wd = reg_wdata[31];
-
   assign intrpt_lvl_high_status_0_intrpt_lvl_high_status_0_we = addr_hit[32] & reg_we & !reg_error;
   assign intrpt_lvl_high_status_0_intrpt_lvl_high_status_0_wd = reg_wdata[0];
 
@@ -29202,30 +25651,6 @@ module gpio_reg_top #(
 
   assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_we = addr_hit[33] & reg_we & !reg_error;
   assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_wd = reg_wdata[23];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_wd = reg_wdata[24];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_wd = reg_wdata[25];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_wd = reg_wdata[26];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_wd = reg_wdata[27];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_wd = reg_wdata[28];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_wd = reg_wdata[29];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_wd = reg_wdata[30];
-
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_we = addr_hit[33] & reg_we & !reg_error;
-  assign intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_wd = reg_wdata[31];
 
   assign intrpt_lvl_low_status_0_intrpt_lvl_low_status_0_we = addr_hit[34] & reg_we & !reg_error;
   assign intrpt_lvl_low_status_0_intrpt_lvl_low_status_0_wd = reg_wdata[0];
@@ -29395,30 +25820,6 @@ module gpio_reg_top #(
   assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_we = addr_hit[35] & reg_we & !reg_error;
   assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_wd = reg_wdata[23];
 
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_wd = reg_wdata[24];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_wd = reg_wdata[25];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_wd = reg_wdata[26];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_wd = reg_wdata[27];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_wd = reg_wdata[28];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_wd = reg_wdata[29];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_wd = reg_wdata[30];
-
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_we = addr_hit[35] & reg_we & !reg_error;
-  assign intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_wd = reg_wdata[31];
-
   // Read data return
   always_comb begin
     reg_rdata_next = '0;
@@ -29429,7 +25830,8 @@ module gpio_reg_top #(
       end
 
       addr_hit[1]: begin
-        reg_rdata_next[0] = cfg_qs;
+        reg_rdata_next[0] = cfg_intrpt_mode_qs;
+        reg_rdata_next[1] = cfg_reserved_qs;
       end
 
       addr_hit[2]: begin
@@ -29498,14 +25900,6 @@ module gpio_reg_top #(
         reg_rdata_next[11:10] = gpio_mode_3_mode_53_qs;
         reg_rdata_next[13:12] = gpio_mode_3_mode_54_qs;
         reg_rdata_next[15:14] = gpio_mode_3_mode_55_qs;
-        reg_rdata_next[17:16] = gpio_mode_3_mode_56_qs;
-        reg_rdata_next[19:18] = gpio_mode_3_mode_57_qs;
-        reg_rdata_next[21:20] = gpio_mode_3_mode_58_qs;
-        reg_rdata_next[23:22] = gpio_mode_3_mode_59_qs;
-        reg_rdata_next[25:24] = gpio_mode_3_mode_60_qs;
-        reg_rdata_next[27:26] = gpio_mode_3_mode_61_qs;
-        reg_rdata_next[29:28] = gpio_mode_3_mode_62_qs;
-        reg_rdata_next[31:30] = gpio_mode_3_mode_63_qs;
       end
 
       addr_hit[6]: begin
@@ -29568,14 +25962,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = gpio_en_1_gpio_en_53_qs;
         reg_rdata_next[22] = gpio_en_1_gpio_en_54_qs;
         reg_rdata_next[23] = gpio_en_1_gpio_en_55_qs;
-        reg_rdata_next[24] = gpio_en_1_gpio_en_56_qs;
-        reg_rdata_next[25] = gpio_en_1_gpio_en_57_qs;
-        reg_rdata_next[26] = gpio_en_1_gpio_en_58_qs;
-        reg_rdata_next[27] = gpio_en_1_gpio_en_59_qs;
-        reg_rdata_next[28] = gpio_en_1_gpio_en_60_qs;
-        reg_rdata_next[29] = gpio_en_1_gpio_en_61_qs;
-        reg_rdata_next[30] = gpio_en_1_gpio_en_62_qs;
-        reg_rdata_next[31] = gpio_en_1_gpio_en_63_qs;
       end
 
       addr_hit[8]: begin
@@ -29638,14 +26024,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = gpio_in_1_gpio_in_53_qs;
         reg_rdata_next[22] = gpio_in_1_gpio_in_54_qs;
         reg_rdata_next[23] = gpio_in_1_gpio_in_55_qs;
-        reg_rdata_next[24] = gpio_in_1_gpio_in_56_qs;
-        reg_rdata_next[25] = gpio_in_1_gpio_in_57_qs;
-        reg_rdata_next[26] = gpio_in_1_gpio_in_58_qs;
-        reg_rdata_next[27] = gpio_in_1_gpio_in_59_qs;
-        reg_rdata_next[28] = gpio_in_1_gpio_in_60_qs;
-        reg_rdata_next[29] = gpio_in_1_gpio_in_61_qs;
-        reg_rdata_next[30] = gpio_in_1_gpio_in_62_qs;
-        reg_rdata_next[31] = gpio_in_1_gpio_in_63_qs;
       end
 
       addr_hit[10]: begin
@@ -29708,14 +26086,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = gpio_out_1_gpio_out_53_qs;
         reg_rdata_next[22] = gpio_out_1_gpio_out_54_qs;
         reg_rdata_next[23] = gpio_out_1_gpio_out_55_qs;
-        reg_rdata_next[24] = gpio_out_1_gpio_out_56_qs;
-        reg_rdata_next[25] = gpio_out_1_gpio_out_57_qs;
-        reg_rdata_next[26] = gpio_out_1_gpio_out_58_qs;
-        reg_rdata_next[27] = gpio_out_1_gpio_out_59_qs;
-        reg_rdata_next[28] = gpio_out_1_gpio_out_60_qs;
-        reg_rdata_next[29] = gpio_out_1_gpio_out_61_qs;
-        reg_rdata_next[30] = gpio_out_1_gpio_out_62_qs;
-        reg_rdata_next[31] = gpio_out_1_gpio_out_63_qs;
       end
 
       addr_hit[12]: begin
@@ -29778,14 +26148,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = '0;
         reg_rdata_next[22] = '0;
         reg_rdata_next[23] = '0;
-        reg_rdata_next[24] = '0;
-        reg_rdata_next[25] = '0;
-        reg_rdata_next[26] = '0;
-        reg_rdata_next[27] = '0;
-        reg_rdata_next[28] = '0;
-        reg_rdata_next[29] = '0;
-        reg_rdata_next[30] = '0;
-        reg_rdata_next[31] = '0;
       end
 
       addr_hit[14]: begin
@@ -29848,14 +26210,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = '0;
         reg_rdata_next[22] = '0;
         reg_rdata_next[23] = '0;
-        reg_rdata_next[24] = '0;
-        reg_rdata_next[25] = '0;
-        reg_rdata_next[26] = '0;
-        reg_rdata_next[27] = '0;
-        reg_rdata_next[28] = '0;
-        reg_rdata_next[29] = '0;
-        reg_rdata_next[30] = '0;
-        reg_rdata_next[31] = '0;
       end
 
       addr_hit[16]: begin
@@ -29918,14 +26272,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = '0;
         reg_rdata_next[22] = '0;
         reg_rdata_next[23] = '0;
-        reg_rdata_next[24] = '0;
-        reg_rdata_next[25] = '0;
-        reg_rdata_next[26] = '0;
-        reg_rdata_next[27] = '0;
-        reg_rdata_next[28] = '0;
-        reg_rdata_next[29] = '0;
-        reg_rdata_next[30] = '0;
-        reg_rdata_next[31] = '0;
       end
 
       addr_hit[18]: begin
@@ -29988,14 +26334,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_rise_en_1_intrpt_rise_en_53_qs;
         reg_rdata_next[22] = intrpt_rise_en_1_intrpt_rise_en_54_qs;
         reg_rdata_next[23] = intrpt_rise_en_1_intrpt_rise_en_55_qs;
-        reg_rdata_next[24] = intrpt_rise_en_1_intrpt_rise_en_56_qs;
-        reg_rdata_next[25] = intrpt_rise_en_1_intrpt_rise_en_57_qs;
-        reg_rdata_next[26] = intrpt_rise_en_1_intrpt_rise_en_58_qs;
-        reg_rdata_next[27] = intrpt_rise_en_1_intrpt_rise_en_59_qs;
-        reg_rdata_next[28] = intrpt_rise_en_1_intrpt_rise_en_60_qs;
-        reg_rdata_next[29] = intrpt_rise_en_1_intrpt_rise_en_61_qs;
-        reg_rdata_next[30] = intrpt_rise_en_1_intrpt_rise_en_62_qs;
-        reg_rdata_next[31] = intrpt_rise_en_1_intrpt_rise_en_63_qs;
       end
 
       addr_hit[20]: begin
@@ -30058,14 +26396,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_fall_en_1_intrpt_fall_en_53_qs;
         reg_rdata_next[22] = intrpt_fall_en_1_intrpt_fall_en_54_qs;
         reg_rdata_next[23] = intrpt_fall_en_1_intrpt_fall_en_55_qs;
-        reg_rdata_next[24] = intrpt_fall_en_1_intrpt_fall_en_56_qs;
-        reg_rdata_next[25] = intrpt_fall_en_1_intrpt_fall_en_57_qs;
-        reg_rdata_next[26] = intrpt_fall_en_1_intrpt_fall_en_58_qs;
-        reg_rdata_next[27] = intrpt_fall_en_1_intrpt_fall_en_59_qs;
-        reg_rdata_next[28] = intrpt_fall_en_1_intrpt_fall_en_60_qs;
-        reg_rdata_next[29] = intrpt_fall_en_1_intrpt_fall_en_61_qs;
-        reg_rdata_next[30] = intrpt_fall_en_1_intrpt_fall_en_62_qs;
-        reg_rdata_next[31] = intrpt_fall_en_1_intrpt_fall_en_63_qs;
       end
 
       addr_hit[22]: begin
@@ -30128,14 +26458,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_53_qs;
         reg_rdata_next[22] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_54_qs;
         reg_rdata_next[23] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_55_qs;
-        reg_rdata_next[24] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_56_qs;
-        reg_rdata_next[25] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_57_qs;
-        reg_rdata_next[26] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_58_qs;
-        reg_rdata_next[27] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_59_qs;
-        reg_rdata_next[28] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_60_qs;
-        reg_rdata_next[29] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_61_qs;
-        reg_rdata_next[30] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_62_qs;
-        reg_rdata_next[31] = intrpt_lvl_high_en_1_intrpt_lvl_high_en_63_qs;
       end
 
       addr_hit[24]: begin
@@ -30198,14 +26520,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_53_qs;
         reg_rdata_next[22] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_54_qs;
         reg_rdata_next[23] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_55_qs;
-        reg_rdata_next[24] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_56_qs;
-        reg_rdata_next[25] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_57_qs;
-        reg_rdata_next[26] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_58_qs;
-        reg_rdata_next[27] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_59_qs;
-        reg_rdata_next[28] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_60_qs;
-        reg_rdata_next[29] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_61_qs;
-        reg_rdata_next[30] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_62_qs;
-        reg_rdata_next[31] = intrpt_lvl_low_en_1_intrpt_lvl_low_en_63_qs;
       end
 
       addr_hit[26]: begin
@@ -30268,14 +26582,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_status_1_intrpt_status_53_qs;
         reg_rdata_next[22] = intrpt_status_1_intrpt_status_54_qs;
         reg_rdata_next[23] = intrpt_status_1_intrpt_status_55_qs;
-        reg_rdata_next[24] = intrpt_status_1_intrpt_status_56_qs;
-        reg_rdata_next[25] = intrpt_status_1_intrpt_status_57_qs;
-        reg_rdata_next[26] = intrpt_status_1_intrpt_status_58_qs;
-        reg_rdata_next[27] = intrpt_status_1_intrpt_status_59_qs;
-        reg_rdata_next[28] = intrpt_status_1_intrpt_status_60_qs;
-        reg_rdata_next[29] = intrpt_status_1_intrpt_status_61_qs;
-        reg_rdata_next[30] = intrpt_status_1_intrpt_status_62_qs;
-        reg_rdata_next[31] = intrpt_status_1_intrpt_status_63_qs;
       end
 
       addr_hit[28]: begin
@@ -30338,14 +26644,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_rise_status_1_intrpt_rise_status_53_qs;
         reg_rdata_next[22] = intrpt_rise_status_1_intrpt_rise_status_54_qs;
         reg_rdata_next[23] = intrpt_rise_status_1_intrpt_rise_status_55_qs;
-        reg_rdata_next[24] = intrpt_rise_status_1_intrpt_rise_status_56_qs;
-        reg_rdata_next[25] = intrpt_rise_status_1_intrpt_rise_status_57_qs;
-        reg_rdata_next[26] = intrpt_rise_status_1_intrpt_rise_status_58_qs;
-        reg_rdata_next[27] = intrpt_rise_status_1_intrpt_rise_status_59_qs;
-        reg_rdata_next[28] = intrpt_rise_status_1_intrpt_rise_status_60_qs;
-        reg_rdata_next[29] = intrpt_rise_status_1_intrpt_rise_status_61_qs;
-        reg_rdata_next[30] = intrpt_rise_status_1_intrpt_rise_status_62_qs;
-        reg_rdata_next[31] = intrpt_rise_status_1_intrpt_rise_status_63_qs;
       end
 
       addr_hit[30]: begin
@@ -30408,14 +26706,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_fall_status_1_intrpt_fall_status_53_qs;
         reg_rdata_next[22] = intrpt_fall_status_1_intrpt_fall_status_54_qs;
         reg_rdata_next[23] = intrpt_fall_status_1_intrpt_fall_status_55_qs;
-        reg_rdata_next[24] = intrpt_fall_status_1_intrpt_fall_status_56_qs;
-        reg_rdata_next[25] = intrpt_fall_status_1_intrpt_fall_status_57_qs;
-        reg_rdata_next[26] = intrpt_fall_status_1_intrpt_fall_status_58_qs;
-        reg_rdata_next[27] = intrpt_fall_status_1_intrpt_fall_status_59_qs;
-        reg_rdata_next[28] = intrpt_fall_status_1_intrpt_fall_status_60_qs;
-        reg_rdata_next[29] = intrpt_fall_status_1_intrpt_fall_status_61_qs;
-        reg_rdata_next[30] = intrpt_fall_status_1_intrpt_fall_status_62_qs;
-        reg_rdata_next[31] = intrpt_fall_status_1_intrpt_fall_status_63_qs;
       end
 
       addr_hit[32]: begin
@@ -30478,14 +26768,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_53_qs;
         reg_rdata_next[22] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_54_qs;
         reg_rdata_next[23] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_55_qs;
-        reg_rdata_next[24] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_56_qs;
-        reg_rdata_next[25] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_57_qs;
-        reg_rdata_next[26] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_58_qs;
-        reg_rdata_next[27] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_59_qs;
-        reg_rdata_next[28] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_60_qs;
-        reg_rdata_next[29] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_61_qs;
-        reg_rdata_next[30] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_62_qs;
-        reg_rdata_next[31] = intrpt_lvl_high_status_1_intrpt_lvl_high_status_63_qs;
       end
 
       addr_hit[34]: begin
@@ -30548,14 +26830,6 @@ module gpio_reg_top #(
         reg_rdata_next[21] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_53_qs;
         reg_rdata_next[22] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_54_qs;
         reg_rdata_next[23] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_55_qs;
-        reg_rdata_next[24] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_56_qs;
-        reg_rdata_next[25] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_57_qs;
-        reg_rdata_next[26] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_58_qs;
-        reg_rdata_next[27] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_59_qs;
-        reg_rdata_next[28] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_60_qs;
-        reg_rdata_next[29] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_61_qs;
-        reg_rdata_next[30] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_62_qs;
-        reg_rdata_next[31] = intrpt_lvl_low_status_1_intrpt_lvl_low_status_63_qs;
       end
 
       default: begin

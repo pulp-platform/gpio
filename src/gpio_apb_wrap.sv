@@ -29,15 +29,10 @@ module gpio_apb_wrap # (
   /// DATA_WIDTH of the APB interface
   parameter int unsigned  DATA_WIDTH = 32,
   /// APB request struct type.
-  parameter type apb_req_t           = logic,
+  parameter type apb_req_t = logic,
   /// APB response struct type.
-  parameter type apb_rsp_t           = logic,
-  /// The number of GPIOs in this module. This parameter can only be changed if
-  /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned NrGPIOs     = 64,
+  parameter type apb_rsp_t = logic,
+  localparam int unsigned NrGPIOs = gpio_reg_pkg::GPIOCount,
   localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
 )(
   input logic                clk_i,
@@ -69,7 +64,8 @@ module gpio_apb_wrap # (
   );
 
   gpio_intf #(
-    .NrGPIOs(NrGPIOs)
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .DATA_WIDTH ( DATA_WIDTH )
   ) i_gpio (
     .clk_i,
     .rst_ni,
@@ -88,12 +84,7 @@ module gpio_apb_wrap_intf # (
   parameter int unsigned  ADDR_WIDTH = 32,
   /// DATA_WIDTH of the APB interface
   parameter int unsigned  DATA_WIDTH = 32,
-  /// The number of GPIOs in this module. This parameter can only be changed if
-  /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned NrGPIOs     = 64,
+  localparam int unsigned NrGPIOs = gpio_reg_pkg::GPIOCount,
   localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
 )(
   input logic                clk_i,
@@ -123,9 +114,10 @@ module gpio_apb_wrap_intf # (
   `APB_ASSIGN_FROM_RESP(apb_slave, s_apb_rsp)
 
   gpio_apb_wrap #(
-    .apb_req_t             (apb_req_t),
-    .apb_rsp_t             (apb_rsp_t),
-    .NrGPIOs               (NrGPIOs)
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .DATA_WIDTH ( DATA_WIDTH ),
+    .apb_req_t  ( apb_req_t  ),
+    .apb_rsp_t  ( apb_rsp_t  )
   ) i_gpio_apb_wrap (
     .clk_i,
     .rst_ni,

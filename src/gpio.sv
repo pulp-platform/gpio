@@ -38,10 +38,9 @@ module gpio #(
   parameter type reg_rsp_t          = logic,
   /// The number of GPIOs in this module. This parameter can only be changed if
   /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned NrGPIOs    = 64
+  /// GPIOs. The module will error out during elaboration if the given parameter
+  /// does not match the number of defined GPIOs in the register file.
+  localparam int unsigned NrGPIOs    = gpio_reg_pkg::GPIOCount
 ) (
   /// Primary input clock. The control interface is suposed to be synchronous to
   /// this clock.
@@ -70,13 +69,6 @@ module gpio #(
   localparam logic [9:0]     HW_VERSION = 1;
 
   import gpio_reg_pkg::*;
-
-  // Elaboration time SystemTasks.
-  if (DATA_WIDTH != $bits(gpio_reg_pkg::gpio_reg2hw_gpio_out_mreg_t))
-    $error("The data width of the register interface does not match the data width of the generated register file.");
-
-  if (NrGPIOs != DATA_WIDTH * gpio_reg_pkg::GPIORegCount)
-    $error("Wrong parametrization of the generated regfile. The number of GPIOs in the register (%d * %d) file does not match the parametrization. Did you forget to regenrate the register file for your parametrization?", gpio_reg_pkg::GPIORegCount, DATA_WIDTH);
 
   // Internal Signals
   gpio_reg2hw_t s_reg2hw;
@@ -201,7 +193,7 @@ module gpio #(
         s_hw2reg.gpio_out[gpio_idx].d = 1'b0;
         s_hw2reg.gpio_out[gpio_idx].de = 1'b1;
       end else if (s_reg2hw.gpio_toggle[gpio_idx].qe) begin
-        `assert_condition(s_reg2hw.gpio_toggle[reg_idx].qe, rst_ni);
+        `assert_condition(s_reg2hw.gpio_toggle[gpio_idx].qe, rst_ni);
         s_hw2reg.gpio_out[gpio_idx].d = ~s_reg2hw.gpio_out[gpio_idx].q;
         s_hw2reg.gpio_out[gpio_idx].de = 1'b1;
       end else begin
@@ -212,33 +204,33 @@ module gpio #(
 
     //Wire interrupt status registers
     always_comb begin
-      `assert_condition({s_reg2hw.intrpt_status[reg_idx].qe, s_reg2hw.intrpt_status[reg_idx].q}, rst_ni);
+      `assert_condition({s_reg2hw.intrpt_status[gpio_idx].qe, s_reg2hw.intrpt_status[gpio_idx].q}, rst_ni);
       //If we clear the aggregated, clear all individual interrupt status registers for the corresponding block of
       //GPIOs
-      if (s_reg2hw.intrpt_status[reg_idx].qe & (s_reg2hw.intrpt_status[reg_idx].q == 1)) begin
-        s_hw2reg.intrpt_rise_status[reg_idx].d      = '0;
-        s_hw2reg.intrpt_rise_status[reg_idx].de     = 1'b1;
-        s_hw2reg.intrpt_fall_status[reg_idx].d      = '0;
-        s_hw2reg.intrpt_fall_status[reg_idx].de     = 1'b1;
-        s_hw2reg.intrpt_lvl_high_status[reg_idx].d  = '0;
-        s_hw2reg.intrpt_lvl_high_status[reg_idx].de = 1'b1;
-        s_hw2reg.intrpt_lvl_low_status[reg_idx].d   = '0;
-        s_hw2reg.intrpt_lvl_low_status[reg_idx].de  = 1'b1;
+      if (s_reg2hw.intrpt_status[gpio_idx].qe & (s_reg2hw.intrpt_status[gpio_idx].q == 1)) begin
+        s_hw2reg.intrpt_rise_status[gpio_idx].d      = '0;
+        s_hw2reg.intrpt_rise_status[gpio_idx].de     = 1'b1;
+        s_hw2reg.intrpt_fall_status[gpio_idx].d      = '0;
+        s_hw2reg.intrpt_fall_status[gpio_idx].de     = 1'b1;
+        s_hw2reg.intrpt_lvl_high_status[gpio_idx].d  = '0;
+        s_hw2reg.intrpt_lvl_high_status[gpio_idx].de = 1'b1;
+        s_hw2reg.intrpt_lvl_low_status[gpio_idx].d   = '0;
+        s_hw2reg.intrpt_lvl_low_status[gpio_idx].de  = 1'b1;
       end else begin
         // Set new bits of the the individual status registers when an interrupt
         // arrives. Only update the registers (de) if there are any new
         // interrupts of the given type.
-        s_hw2reg.intrpt_rise_status[reg_idx].d      = s_gpio_rise_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH] | s_reg2hw.intrpt_rise_status[reg_idx].q;
-        s_hw2reg.intrpt_rise_status[reg_idx].de     = |s_gpio_rise_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH];
-        s_hw2reg.intrpt_fall_status[reg_idx].d      = s_gpio_fall_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH] | s_reg2hw.intrpt_fall_status[reg_idx].q;
-        s_hw2reg.intrpt_fall_status[reg_idx].de     = |s_gpio_fall_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH];
-        s_hw2reg.intrpt_lvl_high_status[reg_idx].d  = s_gpio_high_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH]   | s_reg2hw.intrpt_lvl_high_status[reg_idx].q;
-        s_hw2reg.intrpt_lvl_high_status[reg_idx].de = |s_gpio_high_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH];
-        s_hw2reg.intrpt_lvl_low_status[reg_idx].d   = s_gpio_low_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH]  | s_reg2hw.intrpt_lvl_low_status[reg_idx].q;
-        s_hw2reg.intrpt_lvl_low_status[reg_idx].de  = |s_gpio_low_intrpt[reg_idx * DATA_WIDTH +:DATA_WIDTH];
+        s_hw2reg.intrpt_rise_status[gpio_idx].d      = s_gpio_rise_intrpt[gpio_idx] | s_reg2hw.intrpt_rise_status[gpio_idx].q;
+        s_hw2reg.intrpt_rise_status[gpio_idx].de     = |s_gpio_rise_intrpt[gpio_idx];
+        s_hw2reg.intrpt_fall_status[gpio_idx].d      = s_gpio_fall_intrpt[gpio_idx] | s_reg2hw.intrpt_fall_status[gpio_idx].q;
+        s_hw2reg.intrpt_fall_status[gpio_idx].de     = |s_gpio_fall_intrpt[gpio_idx];
+        s_hw2reg.intrpt_lvl_high_status[gpio_idx].d  = s_gpio_high_intrpt[gpio_idx]   | s_reg2hw.intrpt_lvl_high_status[gpio_idx].q;
+        s_hw2reg.intrpt_lvl_high_status[gpio_idx].de = |s_gpio_high_intrpt[gpio_idx];
+        s_hw2reg.intrpt_lvl_low_status[gpio_idx].d   = s_gpio_low_intrpt[gpio_idx]  | s_reg2hw.intrpt_lvl_low_status[gpio_idx].q;
+        s_hw2reg.intrpt_lvl_low_status[gpio_idx].de  = |s_gpio_low_intrpt[gpio_idx];
       end
     end // always_comb
-    assign s_hw2reg.intrpt_status[reg_idx].d = interrupts_pending[reg_idx * DATA_WIDTH +:DATA_WIDTH];
+    assign s_hw2reg.intrpt_status[gpio_idx].d = interrupts_pending[gpio_idx];
   end
 endmodule : gpio
 
@@ -247,12 +239,7 @@ module gpio_intf #(
   parameter int unsigned  ADDR_WIDTH = 32,
   /// DATA_WIDTH of the reg_bus interface
   parameter int unsigned  DATA_WIDTH = 32,
-  /// The number of GPIOs in this module. This parameter can only be changed if
-  /// the corresponding register file is regenerated with the same number of
-  /// GPIOs. In general, only multiples of the DATA_WIDTH are supported. The
-  /// module will error out during elaboration if the given parameter does not
-  /// match the number of defined GPIOs in the register file.
-  parameter int unsigned  NrGPIOs    = 64,
+  localparam int unsigned NrGPIOs = gpio_reg_pkg::GPIOCount,
   localparam int unsigned STRB_WIDTH = DATA_WIDTH/8
 ) (
   input logic                clk_i,
