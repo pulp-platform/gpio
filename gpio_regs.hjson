@@ -3,82 +3,132 @@
     clock_primary: "clk_i"
     reset_primary: "rst_ni"
     param_list: [
-        {name: GPIORegCount
-         default: "2"}
+        {
+            name: GPIOCount
+            default: "64"
+        }
     ]
     bus_interfaces: [
         { protocol: "reg_iface", direction: "device"}
     ]
     regwidth: 32,
     registers: [
-        { multireg:
-          { name: "GPIO_DIR",
-            count: "GPIORegCount",
-            cname: "GPIO_DIR",
-            desc: '''
-             Set the direction (0 input, 1 output) of the GPIO. Each bit controls one of the
-             32 GPIOs where the LSB corresponds to GPIO0.
-          '''
-            swaccess: "rw",
-            hwaccess: "hro",
+        {
+            name: "INFO"
+            desc: "Info register that contains information about this peripheral."
+            swaccess: "ro",
+            hwaccess: "hwo",
+            hwext: true
             fields: [
                 {
-                    bits: "31:0"
+                    name: "GPIO_CNT"
+                    bits: "9:0"
+                    desc: "Contains the number of GPIOs controlled by this peripheral."
+                }
+                {
+                    name: "VERSION"
+                    bits: "19:10"
+                    desc: "The version number of the IPs."
+                    resval: 1
+                }
+            ]
+        }
+        {
+            name: "CFG"
+            desc: "Global configuration register for the peripheral"
+            swaccess: "rw"
+            hwaccess: "hro"
+            fields: [
+                {
+                    name: "INTRPT_MODE"
+                    bits: "0"
+                    desc: '''
+                         If 1, keep the interrupt line asserted until all
+                         interrupts are cleared. If 0, generate one cycle wide pulse for every interrupt.
+                    '''
+                    resval: 0
+                }
+            ]
+        }
+        { multireg:
+          { name: "GPIO_MODE",
+            cname: "GPIO_MODE",
+            count: "GPIOCount",
+            desc: "Set the IO Mode of the GPIO."
+            swaccess: "rw",
+            hwaccess: "hro",
+            compact: true
+            fields: [
+                {
+                    bits: "1:0"
+                    name: "MODE",
+                    desc: "Change the IO  mode of the GPIO."
+                    resval: "0"
+                    enum: [
+                        { value: 0, name: "INPUT_ONLY", desc: "The correspondin GPIO acts as an input only." }
+                        { value: 1, name: "OUTPUT_ACTIVE", desc: "Actively drive output to 0 or 1" }
+                        { value: 2, name: "OPEN_DRAIN0", desc: "Value 1 drives, value 0 enables tristate. "}
+                        { value: 3, name: "OPEN_DRAIN1", desc: "Value 0 drives, value 1 enables tristate. "}
+                    ]
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x080"}
         { multireg:
           { name: "GPIO_EN",
             cname: "GPIO_EN",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true,
             desc: "Enable sampling on the corresponding GPIO",
             swaccess: "rw",
             hwaccess: "hro",
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x100"}
         { multireg:
           { name: "GPIO_IN",
             cname: "GPIO_IN",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true,
             desc: "Read the current input values of all GPIOs."
             swaccess: "ro",
             hwaccess: "hwo",
             hwext: true
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x180"}
         { multireg:
           { name: "GPIO_OUT",
             cname: "GPIO_OUT",
-            count: "GPIORegCount",
-            desc: "Set the output value of all GPIOs."
+            count: "GPIOCount",
+            compact: true,
+            desc: "Set the output value of the corresponding GPIOs."
             swaccess: "rw",
             hwaccess: "hrw",
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x200"}
         { multireg:
           { name: "GPIO_SET",
             cname: "GPIO_SET",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true,
             desc: "For each asserted bit in this register, set the corresponding bit in the padout register."
             swaccess: "wo",
             hwaccess: "hro",
@@ -86,16 +136,17 @@
             hwext: true,
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x280"}
         { multireg:
           { name: "GPIO_CLEAR",
             cname: "GPIO_CLEAR",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true,
             desc: "For each asserted bit in this register, clear the corresponding bit in the padout register."
             swaccess: "wo",
             hwaccess: "hro",
@@ -103,16 +154,17 @@
             hwext: true,
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x300"}
         { multireg:
           { name: "GPIO_TOGGLE",
             cname: "GPIO_TOGGLE",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true
             desc: "For each asserted bit in this register, toggle the corresponding bit in the padout register."
             swaccess: "wo",
             hwaccess: "hro",
@@ -120,52 +172,170 @@
             hwext: true,
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x380"}
         { multireg:
           { name: "INTRPT_RISE_EN",
             cname: "INTRPT_RISE_EN",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true
             desc: "Enable Interrupts on rising edges for the corresponding GPIO"
             swaccess: "rw",
             hwaccess: "hro",
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x400"}
         { multireg:
           { name: "INTRPT_FALL_EN",
             cname: "INTRPT_FALL_EN",
-            count: "GPIORegCount",
+            count: "GPIOCount",
+            compact: true
             desc: "Enable Interrupts on falling edges for the corresponding GPIO"
             swaccess: "rw",
             hwaccess: "hro",
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
                 }
             ]
           }
         }
-        {reserved: 32}
+        {skipto: "0x480"}
+        { multireg:
+          { name: "INTRPT_LVL_HIGH_EN",
+            cname: "INTRPT_LVL_HIGH_EN",
+            count: "GPIOCount",
+            compact: true
+            desc: "Enable logic high level-sensitive Interrupts on the corresponding GPIO"
+            swaccess: "rw",
+            hwaccess: "hro",
+            fields: [
+                {
+                    bits: "0"
+                }
+            ]
+          }
+        }
+        {skipto: "0x500"}
+        { multireg:
+          { name: "INTRPT_LVL_LOW_EN",
+            cname: "INTRPT_LVL_LOW_EN",
+            count: "GPIOCount",
+            compact: true
+            desc: "Enable logic low level-sensitive Interrupts on the corresponding GPIO"
+            swaccess: "rw",
+            hwaccess: "hro",
+            fields: [
+                {
+                    bits: "0"
+                }
+            ]
+          }
+        }
+        {skipto: "0x580"}
         { multireg:
           { name: "INTRPT_STATUS",
             cname: "INTRPT_STATUS",
-            count: "GPIORegCount",
-            desc: "Report pending interrupts on corresponding GPIOs. Writing 1 to the register clears its content."
+            count: "GPIOCount",
+            compact: true
+            desc: '''
+               Asserted if there is any pending interrupts on corresponding GPIOs.
+               Writing 1 to a specific bit clears all pending interrupts (rise, fall, low, high) of the corresponding GPIO.
+            '''
+            swaccess: "rw1c",
+            hwaccess: "hrw",
+            hwqe: true,
+            hwext: true,
+            fields: [
+                {
+                    bits: "0"
+                }
+            ]
+          }
+        }
+        {skipto: "0x600"}
+        { multireg:
+          { name: "INTRPT_RISE_STATUS",
+            cname: "INTRPT_RISE_STATUS",
+            count: "GPIOCount",
+            compact: true
+            desc: '''
+               Asserted if there is a pending rise interrupts on corresponding GPIOs.
+               Writing 1 to a specific bit clears the pending interrupt of the corresponding GPIO.
+            '''
+            fields: [
+                {
+                    bits: "0"
+                    swaccess: "rw1c",
+                    hwaccess: "hrw",
+                }
+            ]
+          }
+        }
+        {skipto: "0x680"}
+        { multireg:
+          { name: "INTRPT_FALL_STATUS",
+            cname: "INTRPT_FALL_STATUS",
+            count: "GPIOCount",
+            compact: true
+            desc: '''
+               Asserted if there is any pending fall interrupts on corresponding GPIOs.
+               Writing 1 to a specific bit clears the pending interrupt of the corresponding GPIO.
+            '''
+            fields: [
+                {
+                    bits: "0"
+                    swaccess: "rw1c",
+                    hwaccess: "hrw",
+                }
+            ]
+          }
+        }
+        {skipto: "0x700"}
+        { multireg:
+          { name: "INTRPT_LVL_HIGH_STATUS",
+            cname: "INTRPT_LVL_HIGH_STATUS",
+            count: "GPIOCount",
+            compact: true
+            desc: '''
+               Asserted if there is any pending high-level interrupts on corresponding GPIOs.
+               Writing 1 to a specific bit clears the pending interrupt of the corresponding GPIO.
+            '''
             swaccess: "rw1c",
             hwaccess: "hrw",
             fields: [
                 {
-                    bits: "31:0"
+                    bits: "0"
+                    swaccess: "rw1c",
+                    hwaccess: "hrw",
+                }
+            ]
+          }
+        }
+        {skipto: "0x780"}
+        { multireg:
+          { name: "INTRPT_LVL_LOW_STATUS",
+            cname: "INTRPT_LVL_LOW_STATUS",
+            count: "GPIOCount",
+            compact: true
+            desc: '''
+               Asserted if there is any pending low-level interrupts on corresponding GPIOs.
+               Writing 1 to a specific bit clears the pending interrupt of the corresponding GPIO.
+            '''
+            fields: [
+                {
+                    bits: "0"
+                    swaccess: "rw1c",
+                    hwaccess: "hrw",
                 }
             ]
           }

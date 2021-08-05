@@ -7,7 +7,7 @@
 package gpio_reg_pkg;
 
   // Param list
-  parameter int GPIORegCount = 2;
+  parameter int GPIOCount = 64;
 
   // Address widths within the block
   parameter int BlockAw = 11;
@@ -17,101 +17,188 @@ package gpio_reg_pkg;
   ////////////////////////////
 
   typedef struct packed {
-    logic [31:0] q;
-  } gpio_reg2hw_gpio_dir_mreg_t;
+    logic        q;
+  } gpio_reg2hw_cfg_reg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic [1:0]  q;
+  } gpio_reg2hw_gpio_mode_mreg_t;
+
+  typedef struct packed {
+    logic        q;
   } gpio_reg2hw_gpio_en_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
   } gpio_reg2hw_gpio_out_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
     logic        qe;
   } gpio_reg2hw_gpio_set_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
     logic        qe;
   } gpio_reg2hw_gpio_clear_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
     logic        qe;
   } gpio_reg2hw_gpio_toggle_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
   } gpio_reg2hw_intrpt_rise_en_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
   } gpio_reg2hw_intrpt_fall_en_mreg_t;
 
   typedef struct packed {
-    logic [31:0] q;
+    logic        q;
+  } gpio_reg2hw_intrpt_lvl_high_en_mreg_t;
+
+  typedef struct packed {
+    logic        q;
+  } gpio_reg2hw_intrpt_lvl_low_en_mreg_t;
+
+  typedef struct packed {
+    logic        q;
+    logic        qe;
   } gpio_reg2hw_intrpt_status_mreg_t;
 
   typedef struct packed {
-    logic [31:0] d;
+    logic        q;
+  } gpio_reg2hw_intrpt_rise_status_mreg_t;
+
+  typedef struct packed {
+    logic        q;
+  } gpio_reg2hw_intrpt_fall_status_mreg_t;
+
+  typedef struct packed {
+    logic        q;
+  } gpio_reg2hw_intrpt_lvl_high_status_mreg_t;
+
+  typedef struct packed {
+    logic        q;
+  } gpio_reg2hw_intrpt_lvl_low_status_mreg_t;
+
+  typedef struct packed {
+    struct packed {
+      logic [9:0] d;
+    } gpio_cnt;
+    struct packed {
+      logic [9:0] d;
+    } version;
+  } gpio_hw2reg_info_reg_t;
+
+  typedef struct packed {
+    logic        d;
   } gpio_hw2reg_gpio_in_mreg_t;
 
   typedef struct packed {
-    logic [31:0] d;
+    logic        d;
     logic        de;
   } gpio_hw2reg_gpio_out_mreg_t;
 
   typedef struct packed {
-    logic [31:0] d;
-    logic        de;
+    logic        d;
   } gpio_hw2reg_intrpt_status_mreg_t;
+
+  typedef struct packed {
+    logic        d;
+    logic        de;
+  } gpio_hw2reg_intrpt_rise_status_mreg_t;
+
+  typedef struct packed {
+    logic        d;
+    logic        de;
+  } gpio_hw2reg_intrpt_fall_status_mreg_t;
+
+  typedef struct packed {
+    logic        d;
+    logic        de;
+  } gpio_hw2reg_intrpt_lvl_high_status_mreg_t;
+
+  typedef struct packed {
+    logic        d;
+    logic        de;
+  } gpio_hw2reg_intrpt_lvl_low_status_mreg_t;
 
   // Register -> HW type
   typedef struct packed {
-    gpio_reg2hw_gpio_dir_mreg_t [1:0] gpio_dir; // [581:518]
-    gpio_reg2hw_gpio_en_mreg_t [1:0] gpio_en; // [517:454]
-    gpio_reg2hw_gpio_out_mreg_t [1:0] gpio_out; // [453:390]
-    gpio_reg2hw_gpio_set_mreg_t [1:0] gpio_set; // [389:324]
-    gpio_reg2hw_gpio_clear_mreg_t [1:0] gpio_clear; // [323:258]
-    gpio_reg2hw_gpio_toggle_mreg_t [1:0] gpio_toggle; // [257:192]
-    gpio_reg2hw_intrpt_rise_en_mreg_t [1:0] intrpt_rise_en; // [191:128]
-    gpio_reg2hw_intrpt_fall_en_mreg_t [1:0] intrpt_fall_en; // [127:64]
-    gpio_reg2hw_intrpt_status_mreg_t [1:0] intrpt_status; // [63:0]
+    gpio_reg2hw_cfg_reg_t cfg; // [1280:1280]
+    gpio_reg2hw_gpio_mode_mreg_t [63:0] gpio_mode; // [1279:1152]
+    gpio_reg2hw_gpio_en_mreg_t [63:0] gpio_en; // [1151:1088]
+    gpio_reg2hw_gpio_out_mreg_t [63:0] gpio_out; // [1087:1024]
+    gpio_reg2hw_gpio_set_mreg_t [63:0] gpio_set; // [1023:896]
+    gpio_reg2hw_gpio_clear_mreg_t [63:0] gpio_clear; // [895:768]
+    gpio_reg2hw_gpio_toggle_mreg_t [63:0] gpio_toggle; // [767:640]
+    gpio_reg2hw_intrpt_rise_en_mreg_t [63:0] intrpt_rise_en; // [639:576]
+    gpio_reg2hw_intrpt_fall_en_mreg_t [63:0] intrpt_fall_en; // [575:512]
+    gpio_reg2hw_intrpt_lvl_high_en_mreg_t [63:0] intrpt_lvl_high_en; // [511:448]
+    gpio_reg2hw_intrpt_lvl_low_en_mreg_t [63:0] intrpt_lvl_low_en; // [447:384]
+    gpio_reg2hw_intrpt_status_mreg_t [63:0] intrpt_status; // [383:256]
+    gpio_reg2hw_intrpt_rise_status_mreg_t [63:0] intrpt_rise_status; // [255:192]
+    gpio_reg2hw_intrpt_fall_status_mreg_t [63:0] intrpt_fall_status; // [191:128]
+    gpio_reg2hw_intrpt_lvl_high_status_mreg_t [63:0] intrpt_lvl_high_status; // [127:64]
+    gpio_reg2hw_intrpt_lvl_low_status_mreg_t [63:0] intrpt_lvl_low_status; // [63:0]
   } gpio_reg2hw_t;
 
   // HW -> register type
   typedef struct packed {
-    gpio_hw2reg_gpio_in_mreg_t [1:0] gpio_in; // [195:132]
-    gpio_hw2reg_gpio_out_mreg_t [1:0] gpio_out; // [131:66]
-    gpio_hw2reg_intrpt_status_mreg_t [1:0] intrpt_status; // [65:0]
+    gpio_hw2reg_info_reg_t info; // [787:768]
+    gpio_hw2reg_gpio_in_mreg_t [63:0] gpio_in; // [767:704]
+    gpio_hw2reg_gpio_out_mreg_t [63:0] gpio_out; // [703:576]
+    gpio_hw2reg_intrpt_status_mreg_t [63:0] intrpt_status; // [575:512]
+    gpio_hw2reg_intrpt_rise_status_mreg_t [63:0] intrpt_rise_status; // [511:384]
+    gpio_hw2reg_intrpt_fall_status_mreg_t [63:0] intrpt_fall_status; // [383:256]
+    gpio_hw2reg_intrpt_lvl_high_status_mreg_t [63:0] intrpt_lvl_high_status; // [255:128]
+    gpio_hw2reg_intrpt_lvl_low_status_mreg_t [63:0] intrpt_lvl_low_status; // [127:0]
   } gpio_hw2reg_t;
 
   // Register offsets
-  parameter logic [BlockAw-1:0] GPIO_GPIO_DIR_0_OFFSET = 11'h 0;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_DIR_1_OFFSET = 11'h 4;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_EN_0_OFFSET = 11'h 88;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_EN_1_OFFSET = 11'h 8c;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_IN_0_OFFSET = 11'h 110;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_IN_1_OFFSET = 11'h 114;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_OUT_0_OFFSET = 11'h 198;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_OUT_1_OFFSET = 11'h 19c;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_SET_0_OFFSET = 11'h 220;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_SET_1_OFFSET = 11'h 224;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_CLEAR_0_OFFSET = 11'h 2a8;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_CLEAR_1_OFFSET = 11'h 2ac;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_TOGGLE_0_OFFSET = 11'h 330;
-  parameter logic [BlockAw-1:0] GPIO_GPIO_TOGGLE_1_OFFSET = 11'h 334;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_EN_0_OFFSET = 11'h 3b8;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_EN_1_OFFSET = 11'h 3bc;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_EN_0_OFFSET = 11'h 440;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_EN_1_OFFSET = 11'h 444;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_STATUS_0_OFFSET = 11'h 4c8;
-  parameter logic [BlockAw-1:0] GPIO_INTRPT_STATUS_1_OFFSET = 11'h 4cc;
+  parameter logic [BlockAw-1:0] GPIO_INFO_OFFSET = 11'h 0;
+  parameter logic [BlockAw-1:0] GPIO_CFG_OFFSET = 11'h 4;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_MODE_0_OFFSET = 11'h 8;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_MODE_1_OFFSET = 11'h c;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_MODE_2_OFFSET = 11'h 10;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_MODE_3_OFFSET = 11'h 14;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_EN_0_OFFSET = 11'h 80;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_EN_1_OFFSET = 11'h 84;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_IN_0_OFFSET = 11'h 100;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_IN_1_OFFSET = 11'h 104;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_OUT_0_OFFSET = 11'h 180;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_OUT_1_OFFSET = 11'h 184;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_SET_0_OFFSET = 11'h 200;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_SET_1_OFFSET = 11'h 204;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_CLEAR_0_OFFSET = 11'h 280;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_CLEAR_1_OFFSET = 11'h 284;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_TOGGLE_0_OFFSET = 11'h 300;
+  parameter logic [BlockAw-1:0] GPIO_GPIO_TOGGLE_1_OFFSET = 11'h 304;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_EN_0_OFFSET = 11'h 380;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_EN_1_OFFSET = 11'h 384;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_EN_0_OFFSET = 11'h 400;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_EN_1_OFFSET = 11'h 404;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_HIGH_EN_0_OFFSET = 11'h 480;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_HIGH_EN_1_OFFSET = 11'h 484;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_LOW_EN_0_OFFSET = 11'h 500;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_LOW_EN_1_OFFSET = 11'h 504;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_STATUS_0_OFFSET = 11'h 580;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_STATUS_1_OFFSET = 11'h 584;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_STATUS_0_OFFSET = 11'h 600;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_RISE_STATUS_1_OFFSET = 11'h 604;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_STATUS_0_OFFSET = 11'h 680;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_FALL_STATUS_1_OFFSET = 11'h 684;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET = 11'h 700;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_HIGH_STATUS_1_OFFSET = 11'h 704;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET = 11'h 780;
+  parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_LOW_STATUS_1_OFFSET = 11'h 784;
 
   // Reset values for hwext registers and their fields
+  parameter logic [19:0] GPIO_INFO_RESVAL = 20'h 400;
+  parameter logic [9:0] GPIO_INFO_VERSION_RESVAL = 10'h 1;
   parameter logic [31:0] GPIO_GPIO_IN_0_RESVAL = 32'h 0;
   parameter logic [31:0] GPIO_GPIO_IN_1_RESVAL = 32'h 0;
   parameter logic [31:0] GPIO_GPIO_SET_0_RESVAL = 32'h 0;
@@ -120,11 +207,17 @@ package gpio_reg_pkg;
   parameter logic [31:0] GPIO_GPIO_CLEAR_1_RESVAL = 32'h 0;
   parameter logic [31:0] GPIO_GPIO_TOGGLE_0_RESVAL = 32'h 0;
   parameter logic [31:0] GPIO_GPIO_TOGGLE_1_RESVAL = 32'h 0;
+  parameter logic [31:0] GPIO_INTRPT_STATUS_0_RESVAL = 32'h 0;
+  parameter logic [31:0] GPIO_INTRPT_STATUS_1_RESVAL = 32'h 0;
 
   // Register index
   typedef enum int {
-    GPIO_GPIO_DIR_0,
-    GPIO_GPIO_DIR_1,
+    GPIO_INFO,
+    GPIO_CFG,
+    GPIO_GPIO_MODE_0,
+    GPIO_GPIO_MODE_1,
+    GPIO_GPIO_MODE_2,
+    GPIO_GPIO_MODE_3,
     GPIO_GPIO_EN_0,
     GPIO_GPIO_EN_1,
     GPIO_GPIO_IN_0,
@@ -141,32 +234,60 @@ package gpio_reg_pkg;
     GPIO_INTRPT_RISE_EN_1,
     GPIO_INTRPT_FALL_EN_0,
     GPIO_INTRPT_FALL_EN_1,
+    GPIO_INTRPT_LVL_HIGH_EN_0,
+    GPIO_INTRPT_LVL_HIGH_EN_1,
+    GPIO_INTRPT_LVL_LOW_EN_0,
+    GPIO_INTRPT_LVL_LOW_EN_1,
     GPIO_INTRPT_STATUS_0,
-    GPIO_INTRPT_STATUS_1
+    GPIO_INTRPT_STATUS_1,
+    GPIO_INTRPT_RISE_STATUS_0,
+    GPIO_INTRPT_RISE_STATUS_1,
+    GPIO_INTRPT_FALL_STATUS_0,
+    GPIO_INTRPT_FALL_STATUS_1,
+    GPIO_INTRPT_LVL_HIGH_STATUS_0,
+    GPIO_INTRPT_LVL_HIGH_STATUS_1,
+    GPIO_INTRPT_LVL_LOW_STATUS_0,
+    GPIO_INTRPT_LVL_LOW_STATUS_1
   } gpio_id_e;
 
   // Register width information to check illegal writes
-  parameter logic [3:0] GPIO_PERMIT [20] = '{
-    4'b 1111, // index[ 0] GPIO_GPIO_DIR_0
-    4'b 1111, // index[ 1] GPIO_GPIO_DIR_1
-    4'b 1111, // index[ 2] GPIO_GPIO_EN_0
-    4'b 1111, // index[ 3] GPIO_GPIO_EN_1
-    4'b 1111, // index[ 4] GPIO_GPIO_IN_0
-    4'b 1111, // index[ 5] GPIO_GPIO_IN_1
-    4'b 1111, // index[ 6] GPIO_GPIO_OUT_0
-    4'b 1111, // index[ 7] GPIO_GPIO_OUT_1
-    4'b 1111, // index[ 8] GPIO_GPIO_SET_0
-    4'b 1111, // index[ 9] GPIO_GPIO_SET_1
-    4'b 1111, // index[10] GPIO_GPIO_CLEAR_0
-    4'b 1111, // index[11] GPIO_GPIO_CLEAR_1
-    4'b 1111, // index[12] GPIO_GPIO_TOGGLE_0
-    4'b 1111, // index[13] GPIO_GPIO_TOGGLE_1
-    4'b 1111, // index[14] GPIO_INTRPT_RISE_EN_0
-    4'b 1111, // index[15] GPIO_INTRPT_RISE_EN_1
-    4'b 1111, // index[16] GPIO_INTRPT_FALL_EN_0
-    4'b 1111, // index[17] GPIO_INTRPT_FALL_EN_1
-    4'b 1111, // index[18] GPIO_INTRPT_STATUS_0
-    4'b 1111  // index[19] GPIO_INTRPT_STATUS_1
+  parameter logic [3:0] GPIO_PERMIT [36] = '{
+    4'b 0111, // index[ 0] GPIO_INFO
+    4'b 0001, // index[ 1] GPIO_CFG
+    4'b 1111, // index[ 2] GPIO_GPIO_MODE_0
+    4'b 1111, // index[ 3] GPIO_GPIO_MODE_1
+    4'b 1111, // index[ 4] GPIO_GPIO_MODE_2
+    4'b 1111, // index[ 5] GPIO_GPIO_MODE_3
+    4'b 1111, // index[ 6] GPIO_GPIO_EN_0
+    4'b 1111, // index[ 7] GPIO_GPIO_EN_1
+    4'b 1111, // index[ 8] GPIO_GPIO_IN_0
+    4'b 1111, // index[ 9] GPIO_GPIO_IN_1
+    4'b 1111, // index[10] GPIO_GPIO_OUT_0
+    4'b 1111, // index[11] GPIO_GPIO_OUT_1
+    4'b 1111, // index[12] GPIO_GPIO_SET_0
+    4'b 1111, // index[13] GPIO_GPIO_SET_1
+    4'b 1111, // index[14] GPIO_GPIO_CLEAR_0
+    4'b 1111, // index[15] GPIO_GPIO_CLEAR_1
+    4'b 1111, // index[16] GPIO_GPIO_TOGGLE_0
+    4'b 1111, // index[17] GPIO_GPIO_TOGGLE_1
+    4'b 1111, // index[18] GPIO_INTRPT_RISE_EN_0
+    4'b 1111, // index[19] GPIO_INTRPT_RISE_EN_1
+    4'b 1111, // index[20] GPIO_INTRPT_FALL_EN_0
+    4'b 1111, // index[21] GPIO_INTRPT_FALL_EN_1
+    4'b 1111, // index[22] GPIO_INTRPT_LVL_HIGH_EN_0
+    4'b 1111, // index[23] GPIO_INTRPT_LVL_HIGH_EN_1
+    4'b 1111, // index[24] GPIO_INTRPT_LVL_LOW_EN_0
+    4'b 1111, // index[25] GPIO_INTRPT_LVL_LOW_EN_1
+    4'b 1111, // index[26] GPIO_INTRPT_STATUS_0
+    4'b 1111, // index[27] GPIO_INTRPT_STATUS_1
+    4'b 1111, // index[28] GPIO_INTRPT_RISE_STATUS_0
+    4'b 1111, // index[29] GPIO_INTRPT_RISE_STATUS_1
+    4'b 1111, // index[30] GPIO_INTRPT_FALL_STATUS_0
+    4'b 1111, // index[31] GPIO_INTRPT_FALL_STATUS_1
+    4'b 1111, // index[32] GPIO_INTRPT_LVL_HIGH_STATUS_0
+    4'b 1111, // index[33] GPIO_INTRPT_LVL_HIGH_STATUS_1
+    4'b 1111, // index[34] GPIO_INTRPT_LVL_LOW_STATUS_0
+    4'b 1111  // index[35] GPIO_INTRPT_LVL_LOW_STATUS_1
   };
 
 endpackage
