@@ -142,7 +142,7 @@ module gpio #(
       ) i_sync_gpio_input(
         .clk_i,
         .rst_ni,
-        .en_i(s_reg2hw.gpio_en[gpio_idx].q && s_reg2hw.gpio_mode[gpio_idx].q != 0),
+        .en_i(s_reg2hw.gpio_en[gpio_idx].q && s_reg2hw.gpio_mode[gpio_idx].q == 0),
         .serial_i(gpio_in[gpio_idx]),
         .r_edge_o(s_gpio_rise_edge[gpio_idx]),
         .f_edge_o(s_gpio_fall_edge[gpio_idx]),
