@@ -184,16 +184,16 @@ module gpio #(
 
     // GPIO set, clear and toggle logic
     always_comb begin
-      unique if (s_reg2hw.gpio_set[gpio_idx].qe) begin
-        `assert_condition(s_reg2hw.gpio_set[gpio_idx].qe, rst_ni);
+      unique if (s_reg2hw.gpio_set[gpio_idx].qe && s_reg2hw.gpio_set[gpio_idx].q) begin
+        `assert_condition(s_reg2hw.gpio_set[gpio_idx].qe && s_reg2hw.gpio_set[gpio_idx].q, rst_ni);
         s_hw2reg.gpio_out[gpio_idx].d = 1'b1;
         s_hw2reg.gpio_out[gpio_idx].de = 1'b1;
-      end else if (s_reg2hw.gpio_clear[gpio_idx].qe) begin
-        `assert_condition(s_reg2hw.gpio_clear[gpio_idx].qe, rst_ni);
+      end else if (s_reg2hw.gpio_clear[gpio_idx].qe && s_reg2hw.gpio_clear[gpio_idx].q) begin
+        `assert_condition(s_reg2hw.gpio_clear[gpio_idx].qe && s_reg2hw.gpio_clear[gpio_idx].q, rst_ni);
         s_hw2reg.gpio_out[gpio_idx].d = 1'b0;
         s_hw2reg.gpio_out[gpio_idx].de = 1'b1;
-      end else if (s_reg2hw.gpio_toggle[gpio_idx].qe) begin
-        `assert_condition(s_reg2hw.gpio_toggle[gpio_idx].qe, rst_ni);
+      end else if (s_reg2hw.gpio_toggle[gpio_idx].qe && s_reg2hw.gpio_toggle[gpio_idx].q) begin
+        `assert_condition(s_reg2hw.gpio_toggle[gpio_idx].qe && s_reg2hw.gpio_toggle[gpio_idx].q, rst_ni);
         s_hw2reg.gpio_out[gpio_idx].d = ~s_reg2hw.gpio_out[gpio_idx].q;
         s_hw2reg.gpio_out[gpio_idx].de = 1'b1;
       end else begin

@@ -30,14 +30,14 @@ do begin \
 
 
 module tb_gpio;
-  localparam ClkPeriod        = 5ns;
+  localparam ClkPeriod        = 10ns;
   localparam RstCycles        = 6;
   localparam SimTimeoutCycles = 5000; // Timeout the simulation after 5000 cycles
   localparam ApplTime         = 1ns;
-  localparam TestTime         = 4ns;
+  localparam TestTime         = 8ns;
   localparam DataWidth        = 32;
   localparam AddrWidth        = 32;
-  localparam NrGPIOs          = gpio_reg_pkg::GPIOCount;
+  localparam NrGPIOs = gpio_reg_pkg::GPIOCount;
 
   // Testbench control signals
   logic clk;
@@ -120,7 +120,8 @@ endmodule
 
 
 program automatic test #(
-  parameter NrGPIOs   = 64,
+  parameter int unsigned NrGPIOs   = 64,
+  localparam int unsigned NrGPIOs_rounded = ((NrGPIOs+32-1)/32)*32,
   parameter DataWidth = 32,
   parameter AddrWidth = 32,
   parameter ApplTime,
@@ -140,15 +141,95 @@ program automatic test #(
   import reg_test::reg_driver;
   import gpio_reg_pkg::*;
 
-  reg_driver #(.AW(AddrWidth), .DW(DataWidth), .TA(ApplTime), .TT(TestTime)) gpio_reg_driver;
+  localparam type gpio_reg_driver_t = reg_driver #(.AW(AddrWidth), .DW(DataWidth), .TA(ApplTime), .TT(TestTime));
+  gpio_reg_driver_t gpio_reg_driver;
+  // reg_driver #(.AW(AddrWidth), .DW(DataWidth), .TA(ApplTime), .TT(TestTime)) gpio_reg_driver;
 
   // Debug Signals
-  logic [NrGPIOs-1:0][1:0] gpio_modes;
-  logic [NrGPIOs-1:0]      gpio_values;
+  logic [NrGPIOs_rounded-1:0][1:0] gpio_modes;
+  logic [NrGPIOs_rounded-1:0]      gpio_values;
+
+  task automatic test_toggle_set_clear(gpio_reg_driver_t gpio_reg_driver);
+    logic [NrGPIOs-1:0] old_gpio_out_values;
+    logic [DataWidth-1:0] data = 0;
+    logic [AddrWidth-1:0] addr;
+    logic [DataWidth/8-1:0] strb = '1;
+    logic                   error = 0;
+
+    $info("Verifying toggle, set and clear functionality of the outputs");
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+      addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+      data = {16{2'b01}}; // Put all gpios in push-pull mode
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+
+    // Set random gpio out values
+    `SV_RAND_CHECK(randomize(gpio_values));
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+      addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
+      data = gpio_values[i*DataWidth+:DataWidth];
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO out values.");
+    end
+
+    assert (gpio_tx_en_i == '1) else
+      $error("GPIO TX driver not enabled although all GPIOs should be configured as outputs in push-pull mode.");
+    assert (gpio_out_i == gpio_values[NrGPIOs-1:0]) else
+      $error("Missmatch in GPIO outputs. Expected output pattern %0b but was %0b.", gpio_values, gpio_out_i);
+
+    // Sequentially toggle, set and clear all GPIOs and verify only the ones set are modified
+    for (int i= 0; i < NrGPIOs; i++) begin
+      data = 1<<(i%32);
+      // Toggle the GPIO
+      addr = GPIO_GPIO_TOGGLE_0_OFFSET + i/32*4;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      for (int j = 0; j < NrGPIOs; j++) begin
+        if (i == j) begin
+          assert(gpio_out_i[j] == ~gpio_values[j]) else
+            $error("GPIO %0d has not toggled.", j);
+        end else begin
+          assert(gpio_out_i[j] == gpio_values[j]) else
+            $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+        end
+      end
+
+
+      //Set the GPIO
+      addr = GPIO_GPIO_SET_0_OFFSET + i/32*4;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      for (int j = 0; j < NrGPIOs; j++) begin
+        if (i == j) begin
+          assert(gpio_out_i[j] == 1'b1) else
+            $error("GPIO %0d is not set.", j);
+        end else begin
+          assert(gpio_out_i[j] == gpio_values[j]) else
+            $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+        end
+      end
+
+      // Now clear the GPIO
+      addr = GPIO_GPIO_CLEAR_0_OFFSET + i/32*4;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      for (int j = 0; j < NrGPIOs; j++) begin
+        if (i == j) begin
+          assert(gpio_out_i[j] == 1'b0) else
+            $error("GPIO %0d is not cleared.", j);
+        end else begin
+          assert(gpio_out_i[j] == gpio_values[j]) else
+            $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+        end
+      end
+      gpio_values[i] = 1'b0;
+    end
+
+  endtask
 
 
   initial begin: test
-    automatic logic [DataWidth-1:0] data;
+    automatic logic [DataWidth-1:0] data = 0;
     automatic logic [AddrWidth-1:0] addr;
     automatic logic [DataWidth/8-1:0] strb = '1;
     automatic logic                   error = 0;
@@ -171,20 +252,22 @@ program automatic test #(
       // automatic logic [NrGPIOs-1:0][1:0] gpio_modes;
       // automatic logic [NrGPIOs-1:0]      gpio_values;
 
+      $info("Configuring gpios into random modes.");
       `SV_RAND_CHECK(randomize(gpio_modes));
-      for (int i = 0; i < NrGPIOs/DataWidth*2; i++) begin : cfg_gpio_modes
+      for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
         addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
-        data = gpio_modes[i*DataWidth/2+:DataWidth/2];
+        data = gpio_modes[i*(DataWidth/2)+:DataWidth/2];
         gpio_reg_driver.send_write(addr, data, strb, error);
         assert(error == 0) else
           $error("Interface write error while writing GPIO mode.");
       end
 
+      $info("Verifying GPIO outputs with random activity.");
       // Now drive them and check the behavior of the tx_en and the gpio_out ports
       for (int repetition_idx = 0; repetition_idx < 10; repetition_idx++) begin : for_repetition
         // Set random gpio out values
         `SV_RAND_CHECK(randomize(gpio_values));
-        for (int i = 0; i < NrGPIOs/DataWidth; i++) begin
+        for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
           addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
           data = gpio_values[i*DataWidth+:DataWidth];
           gpio_reg_driver.send_write(addr, data, strb, error);
@@ -233,7 +316,14 @@ program automatic test #(
           endcase // case (gpio_modes[reg_idx])
         end // for (int gpio_idx = 0; gpio_idx < NrGPIOs; gpio_idx++)
       end // for (int repetion_idx = 0; repetition_idx < 10; repetition_idx++)
+
+      test_toggle_set_clear(gpio_reg_driver);
+
     end // block: check_output
+
+    begin : check_inputs
+
+    end
 
     begin :check_interrupts
 
