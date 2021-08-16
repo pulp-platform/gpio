@@ -138,6 +138,9 @@ program automatic test #(
   input logic                interrupt_i,
   REG_BUS.out                reg_bus
 );
+  default clocking cb @(posedge clk_i);
+  endclocking
+
   import reg_test::reg_driver;
   import gpio_reg_pkg::*;
 
@@ -150,10 +153,9 @@ program automatic test #(
   logic [NrGPIOs_rounded-1:0]      gpio_values;
 
   task automatic test_toggle_set_clear(gpio_reg_driver_t gpio_reg_driver);
-    logic [NrGPIOs-1:0] old_gpio_out_values;
     logic [DataWidth-1:0] data = 0;
     logic [AddrWidth-1:0] addr;
-    logic [DataWidth/8-1:0] strb = '1;
+    logic [DataWidth/8-1:0] strb  = '1;
     logic                   error = 0;
 
     $info("Verifying toggle, set and clear functionality of the outputs");
@@ -224,6 +226,393 @@ program automatic test #(
       end
       gpio_values[i] = 1'b0;
     end
+
+  endtask
+
+  task test_inputs(gpio_reg_driver_t reg_driver);
+    logic [DataWidth-1:0] data = 0;
+    logic [AddrWidth-1:0] addr;
+    logic [DataWidth/8-1:0] strb                               = '1;
+    logic                   error                              = 0;
+    logic [NrGPIOs_rounded-1:0] enabled_gpios;
+    logic [NrGPIOs-1:0]         gpio_values;
+    logic [NrGPIOs-1:0]         data_queue[$];
+
+    gpio_in_o = '0;
+
+    $info("Test GPIOs in input mode with random data.");
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+      addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+      data = {16{2'b00}}; // Put all gpios in input mode
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+    $info("Enabling input sampling on random GPIOs");
+    `SV_RAND_CHECK(randomize(enabled_gpios));
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
+      addr = GPIO_GPIO_EN_0_OFFSET + i*4;
+      data = enabled_gpios[i*32+:32];
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+
+    $info("Apply and verify random inputs");
+    for (int i = 0; i < 10; i++) begin
+      `SV_RAND_CHECK(randomize(gpio_in_o));
+      ##3; //Wait three cycles
+      #TestTime;
+      for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+        addr = GPIO_GPIO_IN_0_OFFSET + i*4;
+        gpio_reg_driver.send_read(addr, data, error);
+        assert(error == 0) else
+          $error("Interface write error while writing GPIO mode.");
+        for (int j = i*32; j < (i+1)*32; j++) begin
+          if (j < NrGPIOs && enabled_gpios[j]) begin
+            assert(gpio_in_o[j] == data[j%32]) else
+              $error("Got wrong gpio value for GPIO%0d. Was %0b instead of %0b", j, gpio_in_o[j], data[j%32]);
+          end
+        end
+      end
+    end
+
+    $info("Test fast data sampling");
+    for (int k = 0; k < 10; k++) begin
+      `SV_RAND_CHECK(randomize(gpio_values));
+      data_queue.push_back(gpio_values);
+    end
+    fork
+      begin
+        $info("Aplying inputs...");
+        foreach(data_queue[i]) begin
+          #ApplTime;
+          gpio_in_o = data_queue[i];
+          ##1;
+        end
+      end
+      begin
+        ##3; // Delay sampling by 3 cycles for
+        $info("Start reading sampled values on GPIO0...");
+        addr = GPIO_GPIO_IN_0_OFFSET;
+        foreach(data_queue[i]) begin
+          gpio_reg_driver.send_read(addr, data, error);
+          for (int j = 0; j < NrGPIOs && j < 32; j++) begin
+            if (enabled_gpios[j])
+              assert(data[j] == data_queue[i][j]) else
+                $error("On GPIO %0d. Was %0b instead of %0b.", j, data[j], data_queue[i][j]);
+          end
+        end
+      end
+    join
+  endtask
+
+  typedef enum logic[2:0] {None, Rising, Falling, EitherEdge, Low, High} interrupt_mode_e;
+  interrupt_mode_e [NrGPIOs_rounded-1:0] interrupt_modes;
+
+  task automatic test_interrupts(gpio_reg_driver_t gpio_reg_driver);
+    logic [DataWidth-1:0] data = 0;
+    logic [AddrWidth-1:0] addr;
+    logic [DataWidth/8-1:0] strb  = '1;
+    logic                   error = 0;
+    logic [NrGPIOs_rounded-1:0] enabled_gpios;
+    logic [NrGPIOs-1:0]         gpio_values;
+    logic [NrGPIOs-1:0]         toggle_mask;
+    logic [NrGPIOs_rounded-1:0] pending_intrpt, pending_rise_intrpt, pending_fall_intrpt, pending_low_intrpt, pending_high_intrpt;
+    logic                       clear_interrupt;
+
+
+    int unsigned                delay;
+
+    $info("Test GPIO interrupts.");
+    gpio_in_o = '0;
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+      addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+      data = {16{2'b00}}; // Put all gpios in input mode
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+    $info("Enabling input sampling on all GPIOs");
+    `SV_RAND_CHECK(randomize(enabled_gpios));
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
+      addr = GPIO_GPIO_EN_0_OFFSET + i*4;
+      data = '1;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+
+    $info("Put GPIOs into random interrupt modes...");
+    `SV_RAND_CHECK(randomize(interrupt_modes));
+    // Before enabling level low  sensitive interrupts, put gpio inputs in a state
+    // that doesn't immediately trigger them.
+    foreach(gpio_in_o[i]) begin
+      gpio_in_o[i] = interrupt_modes[i] == Low;
+    end
+    ##3;
+
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
+      // Enable rising edge interrupts
+      addr = GPIO_INTRPT_RISE_EN_0_OFFSET + i*4;
+      foreach(data[j]) begin
+        data[j] = interrupt_modes[i*32+j] == Rising || interrupt_modes[i*32+j] == EitherEdge;
+      end
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      // Enable falling edge interrupts
+      addr = GPIO_INTRPT_FALL_EN_0_OFFSET + i*4;
+      foreach(data[j]) begin
+        data[j] = interrupt_modes[i*32+j] == Falling || interrupt_modes[i*32+j] == EitherEdge;
+      end
+      gpio_reg_driver.send_write(addr, data, strb, error);
+
+      // Enable low level-sensitive interrupts
+      foreach(data[j]) begin
+        data[j] = interrupt_modes[i*32+j] == Low;
+      end
+      addr      = GPIO_INTRPT_LVL_LOW_EN_0_OFFSET + i*4;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      // Enable high level-sensitive interrupts
+      addr = GPIO_INTRPT_LVL_HIGH_EN_0_OFFSET + i*4;
+      foreach(data[j]) begin
+        data[j] = interrupt_modes[i*32+j] == High;
+      end
+      gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else
+        $error("Interface write error while writing GPIO mode.");
+    end
+    ##10;
+
+    $info("Inserting random interrupts...");
+    pending_rise_intrpt = '0;
+    pending_fall_intrpt = '0;
+    pending_high_intrpt = '0;
+    pending_low_intrpt = '0;
+    for (int i = 0; i < 10; i++) begin
+      ## 1;
+      // Toggle some random GPIOs
+      `SV_RAND_CHECK(randomize(toggle_mask) with {
+        $countones(toggle_mask) < 3;
+      });
+      $info("Toggling GPIOs...");
+      gpio_in_o ^= toggle_mask;
+      #ApplTime;
+      //Check which interrups this change should trigger...
+      foreach(toggle_mask[j]) begin
+        case (interrupt_modes[j])
+          Falling: begin
+            if (gpio_in_o[j] == 1'b0 && toggle_mask[j])
+              pending_fall_intrpt[j] = 1'b1;
+          end
+
+          Rising: begin
+            if (gpio_in_o[j] == 1'b1 && toggle_mask[j])
+              pending_rise_intrpt[j] = 1'b1;
+          end
+
+          EitherEdge: begin
+            if (toggle_mask[j]) begin
+              if (gpio_in_o[j] == 1'b1)
+                pending_rise_intrpt[j] = 1'b1;
+              else
+                pending_fall_intrpt[j] = 1'b1;
+            end
+          end
+
+          Low: begin
+            if (gpio_in_o[j] == 1'b0)
+              pending_low_intrpt[j] = 1'b1;
+          end
+
+          High: begin
+            if (gpio_in_o[j] == 1'b1)
+              pending_high_intrpt[j] = 1'b1;
+          end
+        endcase
+      end
+      // Wait 3 cycles
+      ##3;
+      $info("Checking interrupt status regs...");
+      pending_intrpt = pending_high_intrpt | pending_low_intrpt | pending_rise_intrpt | pending_fall_intrpt;
+      if (pending_intrpt) begin
+        #TestTime;
+        assert(interrupt_i == 1'b1) else
+          $error("Interrupt was not asserted.");
+        //Read interrupt status registers
+        for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+          addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
+          gpio_reg_driver.send_read(addr, data, error);
+          assert(data == pending_intrpt[i*32+:32]) else
+            $error("Interrupt status missmatch. Was %0x instead of %0x", data, pending_intrpt[i*32+:32]);
+          addr = GPIO_INTRPT_RISE_STATUS_0_OFFSET + i*4;
+          gpio_reg_driver.send_read(addr, data, error);
+          assert(data == pending_rise_intrpt[i*32+:32]) else
+            $error("Interrupt rise status missmatch. Was %0x instead of %0x", data, pending_rise_intrpt[i*32+:32]);
+          addr = GPIO_INTRPT_FALL_STATUS_0_OFFSET + i*4;
+          gpio_reg_driver.send_read(addr, data, error);
+          assert(data == pending_fall_intrpt[i*32+:32]) else
+            $error("Interrupt fall status missmatch. Was %0x instead of %0x", data, pending_fall_intrpt[i*32+:32]);
+          addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + i*4;
+          gpio_reg_driver.send_read(addr, data, error);
+          assert(data == pending_low_intrpt[i*32+:32]) else
+            $error("Interrupt low status missmatch. Was %0x instead of %0x", data, pending_low_intrpt[i*32+:32]);
+          addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + i*4;
+          gpio_reg_driver.send_read(addr, data, error);
+          assert(data == pending_high_intrpt[i*32+:32]) else
+            $error("Interrupt high status missmatch. Was %0x instead of %0x", data, pending_high_intrpt[i*32+:32]);
+        end
+
+        //Now clear some of the pending interrupts
+        $info("Start interrupt clearing...");
+        foreach(pending_intrpt[j]) begin
+          if (pending_intrpt[j]) begin
+            randcase
+              2: begin
+                $info("Clearing all interrupts on GPIO %0d.", j);
+                addr = GPIO_INTRPT_STATUS_0_OFFSET + j/32*4;
+                data = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_rise_intrpt[j] = 1'b0;
+                pending_fall_intrpt[j] = 1'b0;
+                pending_low_intrpt[j]  = 1'b0;
+                pending_high_intrpt[j] = 1'b0;
+              end
+
+              1: begin
+                //Don't clear the interrupt
+              end
+            endcase
+          end
+        end
+
+        foreach(pending_rise_intrpt[j]) begin
+          if (pending_rise_intrpt[j]) begin
+            randcase
+              2: begin
+                $info("Clearing rise interrupt on GPIO %0d.", j);
+                addr = GPIO_INTRPT_RISE_STATUS_0_OFFSET + j/32*4;
+                data = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_rise_intrpt[j] = 1'b0;
+              end
+
+              1: begin
+                //Don't clear the interrupt
+              end
+            endcase
+          end
+        end
+
+        foreach(pending_fall_intrpt[j]) begin
+          if (pending_fall_intrpt[j]) begin
+            randcase
+              2: begin
+                $info("Clearing fall interrupt on GPIO %0d.", j);
+                addr = GPIO_INTRPT_FALL_STATUS_0_OFFSET + j/32*4;
+                data = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_fall_intrpt[j] = 1'b0;
+              end
+
+              1: begin
+                //Don't clear the interrupt
+              end
+            endcase
+          end
+        end
+
+        foreach(pending_low_intrpt[j]) begin
+          if (pending_low_intrpt[j]) begin
+            randcase
+              4: begin
+                $info("Clearing low interrupt on GPIO %0d and asserting the gpio input.", j);
+                gpio_in_o[j] = 1'b1;
+                ##3;
+                addr         = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + j/32*4;
+                data         = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_low_intrpt[j] = 1'b0;
+              end
+
+              2: begin
+                $info("Clearing low interrupt on GPIO %0d.", j);
+                addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + j/32*4;
+                data = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_low_intrpt[j] = 1'b0;
+              end
+
+              1: begin
+                //Don't clear the interrupt
+              end
+            endcase
+          end
+        end
+
+        foreach(pending_high_intrpt[j]) begin
+          if (pending_high_intrpt[j]) begin
+            randcase
+              4: begin
+                $info("Clearing high interrupt on GPIO %0d and clearing the gpio input.", j);
+                gpio_in_o[j] = 1'b0;
+                ##3;
+                addr         = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + j/32*4;
+                data         = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_high_intrpt[j] = 1'b0;
+              end
+
+              2: begin
+                $info("Clearing high interrupt on GPIO %0d.", j);
+                addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + j/32*4;
+                data = 1<<j%32;
+                gpio_reg_driver.send_write(addr, data, strb, error);
+                pending_high_intrpt[j] = 1'b0;
+              end
+
+              1: begin
+                //Don't clear the interrupt
+              end
+            endcase
+          end
+        end
+        // Re-evaluate level sensitive interrupts
+        foreach(interrupt_modes[j]) begin
+          case (interrupt_modes[j])
+            Low: begin
+              if (gpio_in_o[j] == 1'b0)
+                pending_low_intrpt[j] = 1'b1;
+            end
+
+            High: begin
+              if (gpio_in_o[j] == 1'b1)
+                pending_high_intrpt[j] = 1'b1;
+            end
+          endcase
+        end
+
+      end else begin
+        assert(interrupt_i == 1'b0) else
+          $error("Detected stray interrupt!");
+      end
+
+    end
+
+    $info("Clearing all interrupts...");
+    foreach(gpio_in_o[i]) begin
+      gpio_in_o[i] = interrupt_modes[i] == Low;
+    end
+    ##3;
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_modes
+      addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
+      data = '1;
+      gpio_reg_driver.send_write(addr, data, strb, error);
+    end
+
+    ##3;
+    assert(interrupt_i == 1'b0) else
+      $error("Failed to clear all interrupts.");
+
 
   endtask
 
@@ -318,7 +707,8 @@ program automatic test #(
       end // for (int repetion_idx = 0; repetition_idx < 10; repetition_idx++)
 
       test_toggle_set_clear(gpio_reg_driver);
-
+      test_inputs(gpio_reg_driver);
+      test_interrupts(gpio_reg_driver);
     end // block: check_output
 
     begin : check_inputs
