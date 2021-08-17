@@ -95,7 +95,7 @@ module gpio_apb_wrap_intf # (
   output logic [NrGPIOs-1:0] gpio_in_sync_o, // sampled and synchronized GPIO
   // input.
   output logic               interrupt_o,
-  APB_BUS.Slave              apb_slave
+  APB.Slave                  apb_slave
 );
 
   // Convert SV Interface to structs
