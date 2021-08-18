@@ -35,54 +35,47 @@ Here is a summary of the registers:
   Contains read-only registers with the number of GPIOs this instance of the
   GPIO peripheral was parametrized for and an IP version number.
   
-  |------------+------------+-----------------|
   | 31 - 20    | 19 - 10    | 9 - 0           |
-  |------------+------------+-----------------|
+  |------------|------------|-----------------|
   | *reserved* | IP_VERSION | Number of GPIOs |
-  |------------+------------+-----------------|
+
 
 ## `CFG` Register (offset 0x04, rw)
   Controls the interrupt mode of the gpios. If 1, keep the interrupt line
   asserted until all interrupts for all GPIOs are cleared. If 0, generate one
   cycle wide pulses for every new interrupt.
 
-  |------------+------------------|
-  | 31 - 1     |                0 |
-  |------------+------------------|
+  | 31 - 1     | 0                |
+  |------------|------------------|
   | *reserved* | `interrupt_mode` |
-  |------------+------------------|
 
 ## `GPIO_MODE<0-XX>`  Registers (offset 0x08+<reg_idx>*4, rw)
   The GPIO_MODE registers control the operating mode of the individual GPIOs.
   Each register controls 16 GPIOs. 
 
-   |----------+-----+---------+---------|
    | 31 - 30  | ... | 3 - 2   | 1 - 0   |
-   |----------+-----+---------+---------|
+   |----------|-----|---------|---------|
    | `GPIO15` | ... | `GPIO1` | `GPIO0` |
-   |----------+-----+---------+---------|
   
    *Continues in next register*
 
   The values for `GPIO0_MODE` are:
   
   | Value | Description                                             |
-  |-------+---------------------------------------------------------|
-  |     0 | Configures GPIO as an input.                            |
-  |     1 | Configures GPIO as a push-pull output.                  |
-  |     2 | Configures the GPIO to be in open_drain (drive 1) mode. |
-  |     3 | Configures the GPIO to be in open_drain (drive 0) mode. |
+  |-------|---------------------------------------------------------|
+  | 0     | Configures GPIO as an input.                            |
+  | 1     | Configures GPIO as a push-pull output.                  |
+  | 2     | Configures the GPIO to be in open_drain (drive 1) mode. |
+  | 3     | Configures the GPIO to be in open_drain (drive 0) mode. |
 
 ## `GPIO_EN<0-XX>` Registers (offset 0x80+<reg_idx>*4, rw)
   Each bit of these registers control the sampling of one GPIO. This register
   enables sampling of the inputs. If disables (0) the corresponding GPIO will
   not sample the inputs (saves power) and will not generate any interrupts.
   
+   |       31 | ... |       1 |       0 |
    |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -90,11 +83,9 @@ Here is a summary of the registers:
   The bits of these registers contain the input values of the corresponding
   gpios. 
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -104,11 +95,9 @@ Here is a summary of the registers:
   the gpio to high while writing a 0 will put the gpio in high-z. In `GPIO_MODE
   3` writing 0 drives low and writing 1 puts the gpio into high-z.
   
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
   *Continues in next register*
 
@@ -117,11 +106,9 @@ Here is a summary of the registers:
   GPIO_OUT register (masked set). This simplifys setting a single gpio without
   altering the state of the other ones.
   
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -130,11 +117,9 @@ Here is a summary of the registers:
   GPIO_OUT register (masked clear). This simplifys clearing a single gpio without
   altering the state of the other ones.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -143,11 +128,9 @@ Here is a summary of the registers:
   GPIO_OUT register (masked toggle). This simplifys toggling a single gpio without
   altering the state of the other ones.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -160,11 +143,9 @@ Here is a summary of the registers:
    interrupt status registers is set. To clear the interrupt, write a `1` to the
    corresponding bit in the status register.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -177,11 +158,9 @@ Here is a summary of the registers:
    interrupt status registers is set. To clear the interrupt, write a `1` to the
    corresponding bit in the status register.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -195,11 +174,9 @@ Here is a summary of the registers:
    interrupt status registers is set. To clear the interrupt, write a `1` to the
    corresponding bit in the status register.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -213,11 +190,9 @@ Here is a summary of the registers:
    interrupt status registers is set. To clear the interrupt, write a `1` to the
    corresponding bit in the status register.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -226,11 +201,9 @@ Here is a summary of the registers:
    GPIO. Writing a 1 to a specific bit clears **all** pending interrupts (rise,
    fall, low, high) for the corresponding GPIO.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -238,11 +211,9 @@ Here is a summary of the registers:
    Each bit indicates if there is a pending rising-edge interrupt on the corresponding
    GPIO. Writing a 1 to a specific bit clears the interrupt for the corresponding GPIO.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -250,11 +221,9 @@ Here is a summary of the registers:
    Each bit indicates if there is a pending falling-edge interrupt on the corresponding
    GPIO. Writing a 1 to a specific bit clears the interrupt for the corresponding GPIO.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -262,11 +231,9 @@ Here is a summary of the registers:
    Each bit indicates if there is a pending low-level sensitive interrupt on the corresponding
    GPIO. Writing a 1 to a specific bit clears the interrupt for the corresponding GPIO.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
@@ -274,11 +241,9 @@ Here is a summary of the registers:
    Each bit indicates if there is a pending low-level sensitive interrupt on the corresponding
    GPIO. Writing a 1 to a specific bit clears the interrupt for the corresponding GPIO.
 
-   |----------+-----+---------+---------|
-   |       31 | ... |       2 |       0 |
-   |----------+-----+---------+---------|
-   | `GPIO31` | ... | `GPIO2` | `GPIO0` |
-   |----------+-----+---------+---------|
+   | 31       | ... | 1       | 0       |
+   |----------|-----|---------|---------|
+   | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
 
