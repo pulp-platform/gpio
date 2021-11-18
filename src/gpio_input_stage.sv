@@ -17,7 +17,7 @@ module gpio_input_stage #(
   assign f_edge_o = (~serial) & serial_q;
   assign r_edge_o = serial & (~serial_q);
 
-  pulp_clock_gating i_pulp_clock_gating (
+  tc_clk_gating i_clk_gate (
     .clk_i,
     .en_i,
     .test_en_i ( 1'b0 ),
