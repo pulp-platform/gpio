@@ -26,6 +26,15 @@ SystemVerilog interfaces over hierarchical structs.
 | `reg_req_i`      | *input*       | Control interface request side using register interface protocol.                                                                                             |
 | `reg_rsp_o`      | *output*      | Control interface request side using register_interface protocol.                                                                                             |
 
+# Clock Gates
+The GPIO IP manually instantiates a clock gate for each input to reduce power
+consumption when the corresponding GPIO is disabled. However, some target
+technologies (e.g. FPGA) don't behave that well when the clock path contains to
+many clock gating resources. Therefore, the IP is available in two flavors, one
+with the manual clock gates and one without them. You can (*and have to*) select
+between the two by either supplying the /Bender Target/ `-t gpio_with_clk_gates`
+or `-t gpio_no_clk_gates`.
+
 # Register Map
 The registers of this module are all defined in the `gpio_regs.hjson` file which
 is used to auto-generate the actual SV register file using [lowRISCs reggen tool](https://docs.opentitan.org/doc/rm/register_tool/ ).
