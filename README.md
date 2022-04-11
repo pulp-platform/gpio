@@ -83,7 +83,7 @@ Here is a summary of the registers:
   not sample the inputs (saves power) and will not generate any interrupts.
   
    |       31 | ... |       1 |       0 |
-   |----------+-----+---------+---------|
+   |----------|-----|---------|---------|
    | `GPIO31` | ... | `GPIO1` | `GPIO0` |
 
    *Continues in next register*
@@ -132,7 +132,7 @@ Here is a summary of the registers:
 
    *Continues in next register*
 
-## `GPIO_CLEAR<0-XX>` Registers (offset 0x300+<reg_idx>*4, rw)
+## `GPIO_TOGGLE<0-XX>` Registers (offset 0x300+<reg_idx>*4, rw)
   For each asserted bit in the register, toggle the corresponding bit in the
   GPIO_OUT register (masked toggle). This simplifys toggling a single gpio without
   altering the state of the other ones.
