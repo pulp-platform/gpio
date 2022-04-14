@@ -13,6 +13,18 @@ buses for control. Each module in the repository contains an additional wrapper
 at the bottom of the respective source files for the users that prefer
 SystemVerilog interfaces over hierarchical structs.
 
+# Changing Number of GPIOs
+  Changing the number of GPIOs requires regeneration of the register file to
+  include the right number of config registers. The `gpio.sv` will automatically
+  adapt accordingly.
+  
+  The repo contains a Makefile that simplifies the process of invoking the reggen tool for this regeneration.
+  E.g. the following comand will reconfigure the project for 48 GPIOs.
+  
+  ```
+  make reconfigure GPIOS=48
+  ```
+
 # Ports
 | **Signal Name**  | **Direction** | **Description**                                                                                                                                               |
 | ---------------  | ------------- | ---------------                                                                                                                                               |
@@ -256,15 +268,3 @@ Here is a summary of the registers:
 
    *Continues in next register*
 
-# Changing Number of GPIOs
-  Changing the number of GPIOs requires regeneration of the register file to
-  include the right number of config registers. The `gpio.sv` will automatically
-  adapt accordingly.
-  
-  The repo contains a Makefile that simplifies the process of invoking the reggen tool for this regeneration.
-  E.g. the following comand will reconfigure the project for 48 GPIOs.
-  
-  ```
-  make reconfigure GPIOS=48
-  ```
-  
