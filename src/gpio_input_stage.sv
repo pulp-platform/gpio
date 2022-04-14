@@ -50,7 +50,10 @@ module gpio_input_stage #(
   assign f_edge_o = (~serial) & serial_q;
   assign r_edge_o = serial & (~serial_q);
 
-  tc_clk_gating i_clk_gate (
+  tc_clk_gating #(
+    .IS_FUNCTIONAL(0) // The clock gate is not required for proper
+                      // functionality. Just for power saving.
+  ) i_clk_gate (
     .clk_i,
     .en_i,
     .test_en_i ( 1'b0 ),
