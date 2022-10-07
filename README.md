@@ -82,12 +82,12 @@ Here is a summary of the registers:
 
   The values for `GPIO0_MODE` are:
   
-  | Value | Description                                             |
-  |-------|---------------------------------------------------------|
-  | 0     | Configures GPIO as an input.                            |
-  | 1     | Configures GPIO as a push-pull output.                  |
-  | 2     | Configures the GPIO to be in open_drain (drive 1) mode. |
-  | 3     | Configures the GPIO to be in open_drain (drive 0) mode. |
+  | Value | Description                                                                   |
+  |-------|-------------------------------------------------------------------------------|
+  | 0     | Configures GPIO as an input.                                                  |
+  | 1     | Configures GPIO as a push-pull output.                                        |
+  | 2     | Configures the GPIO to be in open_drain0 (0 -> High-Z, 1 -> Drive High) mode. |
+  | 3     | Configures the GPIO to be in open_drain1 (0 -> Drive Low, 1 -> High-Z) mode.  |
 
 ## `GPIO_EN<0-XX>` Registers (offset 0x80+<reg_idx>*4, rw)
   Each bit of these registers control the sampling of one GPIO. This register

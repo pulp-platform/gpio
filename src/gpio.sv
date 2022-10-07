@@ -168,7 +168,7 @@ module gpio #(
             gpio_tx_en_o[gpio_idx] = s_reg2hw.gpio_out[gpio_idx].q;
           end
           2'b11: begin // OPEN_DRAIN1
-            gpio_tx_en_o[gpio_idx] = s_reg2hw.gpio_out[gpio_idx].q;
+            gpio_tx_en_o[gpio_idx] = ~s_reg2hw.gpio_out[gpio_idx].q;
           end
           default: begin
             gpio_tx_en_o[gpio_idx] = 1'b0;

@@ -32,11 +32,12 @@ do begin \
 module tb_gpio;
   localparam ClkPeriod        = 10ns;
   localparam RstCycles        = 6;
-  localparam SimTimeoutCycles = 5000; // Timeout the simulation after 5000 cycles
   localparam ApplTime         = 1ns;
   localparam TestTime         = 8ns;
   localparam DataWidth        = 32;
-  localparam AddrWidth        = 32;
+  localparam AddrWidth = 32;
+  parameter NumRepetitions = 20;
+  localparam SimTimeoutCycles = 5000*NumRepetitions; // Timeout the simulation after 5000 cycles
   localparam NrGPIOs = gpio_reg_pkg::GPIOCount;
 
   // Testbench control signals
@@ -100,11 +101,12 @@ module tb_gpio;
 
   // Connect test programm
   test #(
-    .NrGPIOs   ( NrGPIOs   ),
-    .DataWidth ( DataWidth ),
-    .AddrWidth ( AddrWidth ),
-    .ApplTime  ( ApplTime  ),
-    .TestTime  ( TestTime  )
+    .NrGPIOs        (  NrGPIOs       ),
+    .DataWidth      (  DataWidth     ),
+    .AddrWidth      (  AddrWidth     ),
+    .ApplTime       (  ApplTime      ),
+    .TestTime       (  TestTime      ),
+    .NumRepetitions ( NumRepetitions )
    ) i_test (
     .end_of_sim_o   ( end_of_sim   ),
     .clk_i          ( clk          ),
@@ -125,7 +127,8 @@ program automatic test #(
   parameter DataWidth = 32,
   parameter AddrWidth = 32,
   parameter ApplTime,
-  parameter TestTime
+  parameter TestTime,
+  parameter int unsigned NumRepetitions
 ) (
   output logic               end_of_sim_o,
   input logic                clk_i,
@@ -151,8 +154,9 @@ program automatic test #(
   // Debug Signals
   logic [NrGPIOs_rounded-1:0][1:0] gpio_modes;
   logic [NrGPIOs_rounded-1:0]      gpio_values;
+  int                              error_count = 0;
 
-  task automatic test_toggle_set_clear(gpio_reg_driver_t gpio_reg_driver);
+  task automatic test_toggle_set_clear(gpio_reg_driver_t gpio_reg_driver, int unsigned NumRepetitions);
     logic [DataWidth-1:0] data = 0;
     logic [AddrWidth-1:0] addr;
     logic [DataWidth/8-1:0] strb  = '1;
@@ -163,8 +167,10 @@ program automatic test #(
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
       data = {16{2'b01}}; // Put all gpios in push-pull mode
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
 
     // Set random gpio out values
@@ -173,14 +179,20 @@ program automatic test #(
       addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
       data = gpio_values[i*DataWidth+:DataWidth];
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO out values.");
+        error_count++;
+      end
     end
 
-    assert (gpio_tx_en_i == '1) else
+    assert (gpio_tx_en_i == '1) else begin
       $error("GPIO TX driver not enabled although all GPIOs should be configured as outputs in push-pull mode.");
-    assert (gpio_out_i == gpio_values[NrGPIOs-1:0]) else
+      error_count++;
+    end
+    assert (gpio_out_i == gpio_values[NrGPIOs-1:0]) else begin
       $error("Missmatch in GPIO outputs. Expected output pattern %0b but was %0b.", gpio_values, gpio_out_i);
+      error_count++;
+    end
 
     // Sequentially toggle, set and clear all GPIOs and verify only the ones set are modified
     for (int i= 0; i < NrGPIOs; i++) begin
@@ -190,11 +202,15 @@ program automatic test #(
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
-          assert(gpio_out_i[j] == ~gpio_values[j]) else
+          assert(gpio_out_i[j] == ~gpio_values[j]) else begin
             $error("GPIO %0d has not toggled.", j);
+            error_count++;
+          end
         end else begin
-          assert(gpio_out_i[j] == gpio_values[j]) else
+          assert(gpio_out_i[j] == gpio_values[j]) else begin
             $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+            error_count++;
+          end
         end
       end
 
@@ -204,11 +220,15 @@ program automatic test #(
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
-          assert(gpio_out_i[j] == 1'b1) else
+          assert(gpio_out_i[j] == 1'b1) else begin
             $error("GPIO %0d is not set.", j);
+            error_count++;
+          end
         end else begin
-          assert(gpio_out_i[j] == gpio_values[j]) else
+          assert(gpio_out_i[j] == gpio_values[j]) else begin
             $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+            error_count++;
+          end
         end
       end
 
@@ -217,11 +237,15 @@ program automatic test #(
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
-          assert(gpio_out_i[j] == 1'b0) else
+          assert(gpio_out_i[j] == 1'b0) else begin
             $error("GPIO %0d is not cleared.", j);
+            error_count++;
+          end
         end else begin
-          assert(gpio_out_i[j] == gpio_values[j]) else
+          assert(gpio_out_i[j] == gpio_values[j]) else begin
             $error("GPIO %0d was %0b instead of %0b although it should not have beend altered during modification of GPIO %0d.", j, gpio_out_i[j], gpio_values[j], i);
+            error_count++;
+          end
         end
       end
       gpio_values[i] = 1'b0;
@@ -229,7 +253,7 @@ program automatic test #(
 
   endtask
 
-  task test_inputs(gpio_reg_driver_t reg_driver);
+  task automatic test_inputs(gpio_reg_driver_t reg_driver, int unsigned NumRepetitions);
     logic [DataWidth-1:0] data = 0;
     logic [AddrWidth-1:0] addr;
     logic [DataWidth/8-1:0] strb                               = '1;
@@ -245,8 +269,10 @@ program automatic test #(
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
       data = {16{2'b00}}; // Put all gpios in input mode
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
     $info("Enabling input sampling on random GPIOs");
     `SV_RAND_CHECK(randomize(enabled_gpios));
@@ -254,31 +280,37 @@ program automatic test #(
       addr = GPIO_GPIO_EN_0_OFFSET + i*4;
       data = enabled_gpios[i*32+:32];
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
 
     $info("Apply and verify random inputs");
-    for (int i = 0; i < 10; i++) begin
+    for (int i = 0; i < NumRepetitions; i++) begin
       `SV_RAND_CHECK(randomize(gpio_in_o));
       ##3; //Wait three cycles
       #TestTime;
       for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
         addr = GPIO_GPIO_IN_0_OFFSET + i*4;
         gpio_reg_driver.send_read(addr, data, error);
-        assert(error == 0) else
+        assert(error == 0) else begin
           $error("Interface write error while writing GPIO mode.");
+          error_count++;
+        end
         for (int j = i*32; j < (i+1)*32; j++) begin
           if (j < NrGPIOs && enabled_gpios[j]) begin
-            assert(gpio_in_o[j] == data[j%32]) else
+            assert(gpio_in_o[j] == data[j%32]) else begin
               $error("Got wrong gpio value for GPIO%0d. Was %0b instead of %0b", j, gpio_in_o[j], data[j%32]);
+              error_count++;
+            end
           end
         end
       end
     end
 
     $info("Test fast data sampling");
-    for (int k = 0; k < 10; k++) begin
+    for (int k = 0; k < NumRepetitions; k++) begin
       `SV_RAND_CHECK(randomize(gpio_values));
       data_queue.push_back(gpio_values);
     end
@@ -299,8 +331,10 @@ program automatic test #(
           gpio_reg_driver.send_read(addr, data, error);
           for (int j = 0; j < NrGPIOs && j < 32; j++) begin
             if (enabled_gpios[j])
-              assert(data[j] == data_queue[i][j]) else
+              assert(data[j] == data_queue[i][j]) else begin
                 $error("On GPIO %0d. Was %0b instead of %0b.", j, data[j], data_queue[i][j]);
+                error_count++;
+              end
           end
         end
       end
@@ -310,7 +344,7 @@ program automatic test #(
   typedef enum logic[2:0] {None, Rising, Falling, EitherEdge, Low, High} interrupt_mode_e;
   interrupt_mode_e [NrGPIOs_rounded-1:0] interrupt_modes;
 
-  task automatic test_interrupts(gpio_reg_driver_t gpio_reg_driver);
+  task automatic test_interrupts(gpio_reg_driver_t gpio_reg_driver, int unsigned NumRepetitions);
     logic [DataWidth-1:0] data = 0;
     logic [AddrWidth-1:0] addr;
     logic [DataWidth/8-1:0] strb  = '1;
@@ -325,13 +359,14 @@ program automatic test #(
     int unsigned                delay;
 
     $info("Test GPIO interrupts.");
-    gpio_in_o = '0;
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
       data = {16{2'b00}}; // Put all gpios in input mode
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
     $info("Enabling input sampling on all GPIOs");
     `SV_RAND_CHECK(randomize(enabled_gpios));
@@ -339,12 +374,28 @@ program automatic test #(
       addr = GPIO_GPIO_EN_0_OFFSET + i*4;
       data = '1;
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
 
     $info("Put GPIOs into random interrupt modes...");
-    `SV_RAND_CHECK(randomize(interrupt_modes));
+    // We randomize the modes such that there are not to many enabled
+    // interrupts. Otherwise the interrupt line will probably stay high all the
+    // time due to the level sensitive interrupts.
+    std::randomize(interrupt_modes) with {
+       foreach (interrupt_modes[i]) {
+         interrupt_modes[i] dist {
+                                  None        := 20,
+                                  Rising      := 2,
+                                  Falling     := 2,
+                                  EitherEdge  := 1,
+                                  Low         := 1,
+                                  High        := 1
+                                  };
+       }
+    };
     // Before enabling level low  sensitive interrupts, put gpio inputs in a state
     // that doesn't immediately trigger them.
     foreach(gpio_in_o[i]) begin
@@ -378,8 +429,10 @@ program automatic test #(
         data[j] = interrupt_modes[i*32+j] == High;
       end
       gpio_reg_driver.send_write(addr, data, strb, error);
-      assert(error == 0) else
+      assert(error == 0) else begin
         $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
     ##10;
 
@@ -388,7 +441,7 @@ program automatic test #(
     pending_fall_intrpt = '0;
     pending_high_intrpt = '0;
     pending_low_intrpt = '0;
-    for (int i = 0; i < 10; i++) begin
+    for (int i = 0; i < NumRepetitions; i++) begin
       ## 1;
       // Toggle some random GPIOs
       `SV_RAND_CHECK(randomize(toggle_mask) with {
@@ -430,36 +483,56 @@ program automatic test #(
           end
         endcase
       end
-      // Wait 3 cycles
-      ##3;
       $info("Checking interrupt status regs...");
       pending_intrpt = pending_high_intrpt | pending_low_intrpt | pending_rise_intrpt | pending_fall_intrpt;
       if (pending_intrpt) begin
+        if (pending_rise_intrpt | pending_fall_intrpt) begin
+          // Wait 2 cycles (rising and falling edge interrupts arrive 1 cycle
+          // earlier than level sensitive interrupts)
+          ##2;
+        end else begin
+          ##3;
+        end
+
         #TestTime;
-        assert(interrupt_i == 1'b1) else
+        assert(interrupt_i == 1'b1) else begin
           $error("Interrupt was not asserted.");
+          error_count++;
+        end
+        ##2; // Wait another 2 cycles for the interrupt status register to be
+             // updated
         //Read interrupt status registers
         for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
           addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
           gpio_reg_driver.send_read(addr, data, error);
-          assert(data == pending_intrpt[i*32+:32]) else
+          assert(data == pending_intrpt[i*32+:32]) else begin
             $error("Interrupt status missmatch. Was %0x instead of %0x", data, pending_intrpt[i*32+:32]);
+            error_count++;
+          end
           addr = GPIO_INTRPT_RISE_STATUS_0_OFFSET + i*4;
           gpio_reg_driver.send_read(addr, data, error);
-          assert(data == pending_rise_intrpt[i*32+:32]) else
+          assert(data == pending_rise_intrpt[i*32+:32]) else begin
             $error("Interrupt rise status missmatch. Was %0x instead of %0x", data, pending_rise_intrpt[i*32+:32]);
+            error_count++;
+          end
           addr = GPIO_INTRPT_FALL_STATUS_0_OFFSET + i*4;
           gpio_reg_driver.send_read(addr, data, error);
-          assert(data == pending_fall_intrpt[i*32+:32]) else
+          assert(data == pending_fall_intrpt[i*32+:32]) else begin
             $error("Interrupt fall status missmatch. Was %0x instead of %0x", data, pending_fall_intrpt[i*32+:32]);
+            error_count++;
+          end
           addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + i*4;
           gpio_reg_driver.send_read(addr, data, error);
-          assert(data == pending_low_intrpt[i*32+:32]) else
+          assert(data == pending_low_intrpt[i*32+:32]) else begin
             $error("Interrupt low status missmatch. Was %0x instead of %0x", data, pending_low_intrpt[i*32+:32]);
+            error_count++;
+          end
           addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + i*4;
           gpio_reg_driver.send_read(addr, data, error);
-          assert(data == pending_high_intrpt[i*32+:32]) else
+          assert(data == pending_high_intrpt[i*32+:32]) else begin
             $error("Interrupt high status missmatch. Was %0x instead of %0x", data, pending_high_intrpt[i*32+:32]);
+            error_count++;
+          end
         end
 
         //Now clear some of the pending interrupts
@@ -592,28 +665,127 @@ program automatic test #(
         end
 
       end else begin
-        assert(interrupt_i == 1'b0) else
+        assert(interrupt_i == 1'b0) else begin
           $error("Detected stray interrupt!");
+          error_count++;
+        end
+      end
+      $info("Clearing all interrupts...");
+      foreach(gpio_in_o[i]) begin
+        gpio_in_o[i] = interrupt_modes[i] == Low;
+      end
+      ##3;
+      for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_modes
+        addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
+        data = '1;
+        gpio_reg_driver.send_write(addr, data, strb, error);
       end
 
+      ##3;
+      assert(interrupt_i == 1'b0) else begin
+        $error("Failed to clear all interrupts.");
+        error_count++;
+      end
+      pending_rise_intrpt = '0;
+      pending_fall_intrpt = '0;
+      pending_high_intrpt = '0;
+      pending_low_intrpt  = '0;
     end
 
-    $info("Clearing all interrupts...");
-    foreach(gpio_in_o[i]) begin
-      gpio_in_o[i] = interrupt_modes[i] == Low;
-    end
-    ##3;
-    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_modes
-      addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
-      data = '1;
+
+  endtask
+
+  task automatic test_outputs(gpio_reg_driver_t gpio_reg_driver, int unsigned NumRepetitions);
+    logic [DataWidth-1:0] data = 0;
+    logic [AddrWidth-1:0] addr;
+    logic [DataWidth/8-1:0] strb = '1;
+    logic                   error = 0;
+    $info("Configuring gpios into random modes.");
+    `SV_RAND_CHECK(randomize(gpio_modes));
+    for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+      addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+      data = gpio_modes[i*(DataWidth/2)+:DataWidth/2];
       gpio_reg_driver.send_write(addr, data, strb, error);
+      assert(error == 0) else begin
+        $error("Interface write error while writing GPIO mode.");
+        error_count++;
+      end
     end
 
-    ##3;
-    assert(interrupt_i == 1'b0) else
-      $error("Failed to clear all interrupts.");
+    $info("Verifying GPIO outputs with random activity.");
+    // Now drive them and check the behavior of the tx_en and the gpio_out ports
+    for (int repetition_idx = 0; repetition_idx < NumRepetitions; repetition_idx++) begin : for_repetition
+      // Set random gpio out values
+      `SV_RAND_CHECK(randomize(gpio_values));
+      for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+        addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
+        data = gpio_values[i*DataWidth+:DataWidth];
+        gpio_reg_driver.send_write(addr, data, strb, error);
+        assert(error == 0) else begin
+          $error("Interface write error while writing GPIO out values.");
+          error_count++;
+        end
+      end
 
+      // Check if gpio_out and gpio_tx_en is correct for every gpio
+      for (int gpio_idx = 0; gpio_idx < NrGPIOs; gpio_idx++) begin : for_gpio
+        unique case (gpio_modes[gpio_idx])
+          2'b00: begin // Input Only
+            assert(gpio_tx_en_i[gpio_idx] == 1'b0) else begin
+              $error("GPIO %d TX  is enabled even though GPIO is supposed to be in Input mode.", gpio_idx);
+              error_count++;
+            end
+          end
 
+          2'b01: begin // Push/Pull mode
+            assert(gpio_tx_en_i[gpio_idx] == 1'b1) else begin
+              $error("GPIO %d TX is not enabled even though GPIO is suppposed to be in Push/Pull mode.", gpio_idx);
+              error_count++;
+            end
+            assert(gpio_out_i[gpio_idx] == gpio_values[gpio_idx]) else begin
+              $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
+              error_count++;
+            end
+          end
+
+          2'b10: begin // Open Drain mode 0, Drive high on value=1
+            if (gpio_values[gpio_idx] == 1'b1) begin
+              assert(gpio_out_i[gpio_idx] == 1'b1) else begin
+                $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
+                error_count++;
+              end
+              assert(gpio_tx_en_i[gpio_idx] == 1'b1) else begin
+                $error("GPIO %d TX enable is not high even thought the GPIO is in Open Drain Mode 0 and the output is driven high.", gpio_idx);
+                error_count++;
+              end
+            end else begin
+              assert(gpio_tx_en_i[gpio_idx] == 1'b0) else begin
+                $error("GPIO %d TX enable is asserted even thought the GPIO is in Open Drain Mode 0 and the output is driven low.", gpio_idx);
+                error_count++;
+              end
+            end
+          end // case: 2'b10
+
+          2'b11: begin // Open Drain mode 1, Drive low on value=0
+            if (gpio_values[gpio_idx] == 1'b0) begin
+              assert(gpio_out_i[gpio_idx] == 1'b0) else begin
+                $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
+                error_count++;
+              end
+              assert(gpio_tx_en_i[gpio_idx] == 1'b1) else begin
+                $error("GPIO %d TX enable is not high even thought the GPIO is in Open Drain Mode 1 and the output is driven low.", gpio_idx);
+                error_count++;
+              end
+            end else begin
+              assert(gpio_tx_en_i[gpio_idx] == 1'b0) else begin
+                $error("GPIO %d TX enable is asserted even thought the GPIO is in Open Drain Mode 1 and the output is driven high.", gpio_idx);
+                error_count++;
+              end
+            end
+          end
+        endcase // case (gpio_modes[reg_idx])
+      end // for (int gpio_idx = 0; gpio_idx < NrGPIOs; gpio_idx++)
+    end // for (int repetion_idx = 0; repetition_idx < 10; repetition_idx++)
   endtask
 
 
@@ -636,88 +808,12 @@ program automatic test #(
     // data = 32'h190;
     // gpio_reg_driver.send_write(addr, data, strb, error);
 
-    // Configure GPIOs with random modes and randomly drive them
-    begin : check_output
-      // automatic logic [NrGPIOs-1:0][1:0] gpio_modes;
-      // automatic logic [NrGPIOs-1:0]      gpio_values;
+    test_outputs(gpio_reg_driver, NumRepetitions);
+    test_toggle_set_clear(gpio_reg_driver, NumRepetitions);
+    test_inputs(gpio_reg_driver, NumRepetitions);
+    test_interrupts(gpio_reg_driver, NumRepetitions);
 
-      $info("Configuring gpios into random modes.");
-      `SV_RAND_CHECK(randomize(gpio_modes));
-      for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
-        addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
-        data = gpio_modes[i*(DataWidth/2)+:DataWidth/2];
-        gpio_reg_driver.send_write(addr, data, strb, error);
-        assert(error == 0) else
-          $error("Interface write error while writing GPIO mode.");
-      end
-
-      $info("Verifying GPIO outputs with random activity.");
-      // Now drive them and check the behavior of the tx_en and the gpio_out ports
-      for (int repetition_idx = 0; repetition_idx < 10; repetition_idx++) begin : for_repetition
-        // Set random gpio out values
-        `SV_RAND_CHECK(randomize(gpio_values));
-        for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
-          addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
-          data = gpio_values[i*DataWidth+:DataWidth];
-          gpio_reg_driver.send_write(addr, data, strb, error);
-          assert(error == 0) else
-            $error("Interface write error while writing GPIO out values.");
-        end
-
-        // Check if gpio_out and gpio_tx_en is correct for every gpio
-        for (int gpio_idx = 0; gpio_idx < NrGPIOs; gpio_idx++) begin : for_gpio
-          case (gpio_modes[gpio_idx])
-            2'b00: begin // Input Only
-              assert(gpio_tx_en_i[gpio_idx] == 1'b0) else
-                $error("GPIO %d TX  is enabled even though GPIO is supposed to be in Input mode.", gpio_idx);
-            end
-
-            2'b01: begin // Push/Pull mode
-              assert(gpio_tx_en_i[gpio_idx] == 1'b1) else
-                $error("GPIO %d TX is not enabled even though GPIO is suppposed to be in Push/Pull mode.", gpio_idx);
-              assert(gpio_out_i[gpio_idx] == gpio_values[gpio_idx]) else
-                $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
-            end
-
-            2'b10: begin // Open Drain mode 0, Drive high on value=1
-              if (gpio_values[gpio_idx] == 1'b1) begin
-                assert(gpio_out_i[gpio_idx] == 1'b1) else
-                  $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
-                assert(gpio_tx_en_i[gpio_idx] == 1'b1) else
-                  $error("GPIO %d TX enable is not high even thought the GPIO is in Open Drain Mode 0 and the output is driven high.", gpio_idx);
-              end else begin
-                assert(gpio_tx_en_i[gpio_idx] == 1'b0) else
-                  $error("GPIO %d TX enable is asserted even thought the GPIO is in Open Drain Mode 0 and the output is driven low.", gpio_idx);
-              end
-            end // case: 2'b10
-
-            2'b10: begin // Open Drain mode 1, Drive high on value=1
-              if (gpio_values[gpio_idx] == 1'b0) begin
-                assert(gpio_out_i[gpio_idx] == 1'b0) else
-                  $error("Got wrong output value on GPIO %d. Was suposed to be %b but was %b.", gpio_idx, gpio_values[gpio_idx], gpio_out_i[gpio_idx]);
-                assert(gpio_tx_en_i[gpio_idx] == 1'b1) else
-                  $error("GPIO %d TX enable is not high even thought the GPIO is in Open Drain Mode 1 and the output is driven low.", gpio_idx);
-              end else begin
-                assert(gpio_tx_en_i[gpio_idx] == 1'b0) else
-                  $error("GPIO %d TX enable is asserted even thought the GPIO is in Open Drain Mode 1 and the output is driven high.", gpio_idx);
-              end
-            end
-          endcase // case (gpio_modes[reg_idx])
-        end // for (int gpio_idx = 0; gpio_idx < NrGPIOs; gpio_idx++)
-      end // for (int repetion_idx = 0; repetition_idx < 10; repetition_idx++)
-
-      test_toggle_set_clear(gpio_reg_driver);
-      test_inputs(gpio_reg_driver);
-      test_interrupts(gpio_reg_driver);
-    end // block: check_output
-
-    begin : check_inputs
-
-    end
-
-    begin :check_interrupts
-
-    end
+    $info("All tests finished with %0d errors.", error_count);
     end_of_sim_o = 1;
   end // block: logic
 
