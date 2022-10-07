@@ -29,7 +29,7 @@
                     name: "VERSION"
                     bits: "19:10"
                     desc: "The version number of the IPs."
-                    resval: 1
+                    resval: 2
                 }
             ]
         }

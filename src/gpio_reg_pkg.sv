@@ -202,8 +202,8 @@ package gpio_reg_pkg;
   parameter logic [BlockAw-1:0] GPIO_INTRPT_LVL_LOW_STATUS_1_OFFSET = 11'h 784;
 
   // Reset values for hwext registers and their fields
-  parameter logic [19:0] GPIO_INFO_RESVAL = 20'h 400;
-  parameter logic [9:0] GPIO_INFO_VERSION_RESVAL = 10'h 1;
+  parameter logic [19:0] GPIO_INFO_RESVAL = 20'h 800;
+  parameter logic [9:0] GPIO_INFO_VERSION_RESVAL = 10'h 2;
   parameter logic [31:0] GPIO_GPIO_IN_0_RESVAL = 32'h 0;
   parameter logic [23:0] GPIO_GPIO_IN_1_RESVAL = 24'h 0;
   parameter logic [31:0] GPIO_GPIO_SET_0_RESVAL = 32'h 0;
