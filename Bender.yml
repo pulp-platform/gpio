@@ -9,7 +9,7 @@ dependencies:
   common_verification: { git: "https://github.com/pulp-platform/common_verification.git", version: 0.2.0}
   register_interface: { git: "https://github.com/pulp-platform/register_interface.git", version: 0.3.1}
   apb: { git: "https://github.com/pulp-platform/apb.git", rev: "5c4fa53bfd650959d05afa517e921ea9001a6cf3" } # To be udpated once PR #6 got merged.
-  axi: { git: "https://github.com/pulp-platform/axi.git", version: 0.29.1 }
+  axi: { git: "https://github.com/pulp-platform/axi.git", version: 0.35.3 }
 
 sources:
   - src/gpio_reg_pkg.sv
