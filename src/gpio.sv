@@ -263,8 +263,8 @@ module gpio_intf #(
   reg_bus_rsp_t s_reg_rsp;
 
   // Assign SV interface to structs
-  `REG_BUS_ASSIGN_TO_REQ(s_reg_req, reg_bus);
-  `REG_BUS_ASSIGN_FROM_RSP(reg_bus, s_reg_rsp);
+  `REG_BUS_ASSIGN_TO_REQ(s_reg_req, reg_bus)
+  `REG_BUS_ASSIGN_FROM_RSP(reg_bus, s_reg_rsp)
 
   gpio #(
     .reg_req_t(reg_bus_req_t),

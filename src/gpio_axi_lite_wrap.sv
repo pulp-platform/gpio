@@ -85,11 +85,9 @@ module gpio_axi_lite_wrap # (
 
 
   gpio #(
-    .ADDR_WIDTH ( ADDR_WIDTH ),
     .DATA_WIDTH ( DATA_WIDTH ),
     .reg_req_t ( reg_bus_req_t ),
-    .reg_rsp_t ( reg_bus_rsp_t ),
-    .NrGPIOs   ( NrGPIOs       )
+    .reg_rsp_t ( reg_bus_rsp_t )
   ) i_gpio (
     .clk_i,
     .rst_ni,
