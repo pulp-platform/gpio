@@ -48,7 +48,7 @@ module gpio_apb_wrap # (
 );
 
   // Convert APB to reg_bus
-  REG_BUS #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) s_reg_bus();
+  REG_BUS #(.ADDR_WIDTH(ADDR_WIDTH), .DATA_WIDTH(DATA_WIDTH)) s_reg_bus(.clk_i);
   apb_to_reg i_abp_to_reg (
     .clk_i,
     .rst_ni,
