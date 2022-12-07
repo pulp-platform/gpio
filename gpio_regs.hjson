@@ -5,7 +5,7 @@
     param_list: [
         {
             name: GPIOCount
-            default: "56"
+            default: "32"
         }
     ]
     bus_interfaces: [

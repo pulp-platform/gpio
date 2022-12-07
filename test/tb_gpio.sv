@@ -26,8 +26,19 @@ do begin \
     $display("%s:%0d: Randomization failed \"%s\"", `__FILE__, `__LINE__, `"r`"); \
     $stop;\
   end\
-  end while (0)
+end while (0)
 
+// Unfortunately, the reggen tool has very inconsistent naming rules for multi
+// regs. The generated parameters use a suffixed index for multireg iff there
+// are at least two registers. If we generate less then 32 GPIOs the multiregs
+// will only contain a single reg instance. In that case, the current version of
+// reggen will ommit the suffix which causes issues in this TB we thus use this
+// preproc macro workaround to alias to the right regs in this case. The
+// 'reconfigure' target in the makefile will take care of enabling/disabling the
+// workaround as needed. Thus DO NOT TOUCH THE FOLLOWING TWO LINES MANUALLY.
+
+//`define ENABLE_LESS_THAN_16_GPIOS_REG_PKG_WORKAROUND
+`define ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
 
 module tb_gpio;
   localparam ClkPeriod        = 10ns;
@@ -164,7 +175,11 @@ program automatic test #(
 
     $info("Verifying toggle, set and clear functionality of the outputs");
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+`ifdef ENABLE_LESS_THAN_16_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_MODE_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+`endif
       data = {16{2'b01}}; // Put all gpios in push-pull mode
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -176,7 +191,11 @@ program automatic test #(
     // Set random gpio out values
     `SV_RAND_CHECK(randomize(gpio_values));
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_OUT_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
+`endif
       data = gpio_values[i*DataWidth+:DataWidth];
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -198,7 +217,11 @@ program automatic test #(
     for (int i= 0; i < NrGPIOs; i++) begin
       data = 1<<(i%32);
       // Toggle the GPIO
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_TOGGLE_OFFSET + i/32*4;
+`else
       addr = GPIO_GPIO_TOGGLE_0_OFFSET + i/32*4;
+`endif
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
@@ -216,7 +239,11 @@ program automatic test #(
 
 
       //Set the GPIO
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_SET_OFFSET + i/32*4;
+`else
       addr = GPIO_GPIO_SET_0_OFFSET + i/32*4;
+`endif
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
@@ -233,7 +260,11 @@ program automatic test #(
       end
 
       // Now clear the GPIO
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_CLEAR_OFFSET + i/32*4;
+`else
       addr = GPIO_GPIO_CLEAR_0_OFFSET + i/32*4;
+`endif
       gpio_reg_driver.send_write(addr, data, strb, error);
       for (int j = 0; j < NrGPIOs; j++) begin
         if (i == j) begin
@@ -266,7 +297,11 @@ program automatic test #(
 
     $info("Test GPIOs in input mode with random data.");
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+`ifdef ENABLE_LESS_THAN_16_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_MODE_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+`endif
       data = {16{2'b00}}; // Put all gpios in input mode
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -277,7 +312,11 @@ program automatic test #(
     $info("Enabling input sampling on random GPIOs");
     `SV_RAND_CHECK(randomize(enabled_gpios));
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_EN_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_EN_0_OFFSET + i*4;
+`endif
       data = enabled_gpios[i*32+:32];
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -292,7 +331,11 @@ program automatic test #(
       ##3; //Wait three cycles
       #TestTime;
       for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+        addr = GPIO_GPIO_IN_OFFSET + i*4;
+`else
         addr = GPIO_GPIO_IN_0_OFFSET + i*4;
+`endif
         gpio_reg_driver.send_read(addr, data, error);
         assert(error == 0) else begin
           $error("Interface write error while writing GPIO mode.");
@@ -326,7 +369,11 @@ program automatic test #(
       begin
         ##3; // Delay sampling by 3 cycles for
         $info("Start reading sampled values on GPIO0...");
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+        addr = GPIO_GPIO_IN_OFFSET;
+`else
         addr = GPIO_GPIO_IN_0_OFFSET;
+`endif
         foreach(data_queue[i]) begin
           gpio_reg_driver.send_read(addr, data, error);
           for (int j = 0; j < NrGPIOs && j < 32; j++) begin
@@ -360,7 +407,11 @@ program automatic test #(
 
     $info("Test GPIO interrupts.");
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+`ifdef ENABLE_LESS_THAN_16_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_MODE_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+`endif
       data = {16{2'b00}}; // Put all gpios in input mode
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -371,7 +422,11 @@ program automatic test #(
     $info("Enabling input sampling on all GPIOs");
     `SV_RAND_CHECK(randomize(enabled_gpios));
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_EN_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_EN_0_OFFSET + i*4;
+`endif
       data = '1;
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -405,13 +460,21 @@ program automatic test #(
 
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_enable
       // Enable rising edge interrupts
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_INTRPT_RISE_EN_OFFSET + i*4;
+`else
       addr = GPIO_INTRPT_RISE_EN_0_OFFSET + i*4;
+`endif
       foreach(data[j]) begin
         data[j] = interrupt_modes[i*32+j] == Rising || interrupt_modes[i*32+j] == EitherEdge;
       end
       gpio_reg_driver.send_write(addr, data, strb, error);
       // Enable falling edge interrupts
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_INTRPT_FALL_EN_OFFSET + i*4;
+`else
       addr = GPIO_INTRPT_FALL_EN_0_OFFSET + i*4;
+`endif
       foreach(data[j]) begin
         data[j] = interrupt_modes[i*32+j] == Falling || interrupt_modes[i*32+j] == EitherEdge;
       end
@@ -421,10 +484,18 @@ program automatic test #(
       foreach(data[j]) begin
         data[j] = interrupt_modes[i*32+j] == Low;
       end
-      addr      = GPIO_INTRPT_LVL_LOW_EN_0_OFFSET + i*4;
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_INTRPT_LVL_LOW_EN_OFFSET + i*4;
+`else
+      addr = GPIO_INTRPT_LVL_LOW_EN_0_OFFSET + i*4;
+`endif
       gpio_reg_driver.send_write(addr, data, strb, error);
       // Enable high level-sensitive interrupts
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_INTRPT_LVL_HIGH_EN_OFFSET + i*4;
+`else
       addr = GPIO_INTRPT_LVL_HIGH_EN_0_OFFSET + i*4;
+`endif
       foreach(data[j]) begin
         data[j] = interrupt_modes[i*32+j] == High;
       end
@@ -503,31 +574,51 @@ program automatic test #(
              // updated
         //Read interrupt status registers
         for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+          addr = GPIO_INTRPT_STATUS_OFFSET + i*4;
+`else
           addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
+`endif
           gpio_reg_driver.send_read(addr, data, error);
           assert(data == pending_intrpt[i*32+:32]) else begin
             $error("Interrupt status missmatch. Was %0x instead of %0x", data, pending_intrpt[i*32+:32]);
             error_count++;
           end
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+          addr = GPIO_INTRPT_RISE_STATUS_OFFSET + i*4;
+`else
           addr = GPIO_INTRPT_RISE_STATUS_0_OFFSET + i*4;
+`endif
           gpio_reg_driver.send_read(addr, data, error);
           assert(data == pending_rise_intrpt[i*32+:32]) else begin
             $error("Interrupt rise status missmatch. Was %0x instead of %0x", data, pending_rise_intrpt[i*32+:32]);
             error_count++;
           end
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+          addr = GPIO_INTRPT_FALL_STATUS_OFFSET + i*4;
+`else
           addr = GPIO_INTRPT_FALL_STATUS_0_OFFSET + i*4;
+`endif
           gpio_reg_driver.send_read(addr, data, error);
           assert(data == pending_fall_intrpt[i*32+:32]) else begin
             $error("Interrupt fall status missmatch. Was %0x instead of %0x", data, pending_fall_intrpt[i*32+:32]);
             error_count++;
           end
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+          addr = GPIO_INTRPT_LVL_LOW_STATUS_OFFSET + i*4;
+`else
           addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + i*4;
+`endif
           gpio_reg_driver.send_read(addr, data, error);
           assert(data == pending_low_intrpt[i*32+:32]) else begin
             $error("Interrupt low status missmatch. Was %0x instead of %0x", data, pending_low_intrpt[i*32+:32]);
             error_count++;
           end
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+          addr = GPIO_INTRPT_LVL_HIGH_STATUS_OFFSET + i*4;
+`else
           addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + i*4;
+`endif
           gpio_reg_driver.send_read(addr, data, error);
           assert(data == pending_high_intrpt[i*32+:32]) else begin
             $error("Interrupt high status missmatch. Was %0x instead of %0x", data, pending_high_intrpt[i*32+:32]);
@@ -542,7 +633,11 @@ program automatic test #(
             randcase
               2: begin
                 $info("Clearing all interrupts on GPIO %0d.", j);
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_STATUS_OFFSET + j/32*4;
+`else
                 addr = GPIO_INTRPT_STATUS_0_OFFSET + j/32*4;
+`endif
                 data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_rise_intrpt[j] = 1'b0;
@@ -563,7 +658,11 @@ program automatic test #(
             randcase
               2: begin
                 $info("Clearing rise interrupt on GPIO %0d.", j);
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_RISE_STATUS_OFFSET + j/32*4;
+`else
                 addr = GPIO_INTRPT_RISE_STATUS_0_OFFSET + j/32*4;
+`endif
                 data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_rise_intrpt[j] = 1'b0;
@@ -581,7 +680,11 @@ program automatic test #(
             randcase
               2: begin
                 $info("Clearing fall interrupt on GPIO %0d.", j);
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_FALL_STATUS_OFFSET + j/32*4;
+`else
                 addr = GPIO_INTRPT_FALL_STATUS_0_OFFSET + j/32*4;
+`endif
                 data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_fall_intrpt[j] = 1'b0;
@@ -601,15 +704,23 @@ program automatic test #(
                 $info("Clearing low interrupt on GPIO %0d and asserting the gpio input.", j);
                 gpio_in_o[j] = 1'b1;
                 ##3;
-                addr         = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + j/32*4;
-                data         = 1<<j%32;
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_LVL_LOW_STATUS_OFFSET + j/32*4;
+`else
+                addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + j/32*4;
+`endif
+                data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_low_intrpt[j] = 1'b0;
               end
 
               2: begin
                 $info("Clearing low interrupt on GPIO %0d.", j);
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_LVL_LOW_STATUS_OFFSET + j/32*4;
+`else
                 addr = GPIO_INTRPT_LVL_LOW_STATUS_0_OFFSET + j/32*4;
+`endif
                 data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_low_intrpt[j] = 1'b0;
@@ -629,15 +740,23 @@ program automatic test #(
                 $info("Clearing high interrupt on GPIO %0d and clearing the gpio input.", j);
                 gpio_in_o[j] = 1'b0;
                 ##3;
-                addr         = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + j/32*4;
-                data         = 1<<j%32;
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_LVL_HIGH_STATUS_OFFSET + j/32*4;
+`else
+                addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + j/32*4;
+`endif
+                data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_high_intrpt[j] = 1'b0;
               end
 
               2: begin
                 $info("Clearing high interrupt on GPIO %0d.", j);
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+                addr = GPIO_INTRPT_LVL_HIGH_STATUS_OFFSET + j/32*4;
+`else
                 addr = GPIO_INTRPT_LVL_HIGH_STATUS_0_OFFSET + j/32*4;
+`endif
                 data = 1<<j%32;
                 gpio_reg_driver.send_write(addr, data, strb, error);
                 pending_high_intrpt[j] = 1'b0;
@@ -676,7 +795,11 @@ program automatic test #(
       end
       ##3;
       for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin : cfg_gpio_modes
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+        addr = GPIO_INTRPT_STATUS_OFFSET + i*4;
+`else
         addr = GPIO_INTRPT_STATUS_0_OFFSET + i*4;
+`endif
         data = '1;
         gpio_reg_driver.send_write(addr, data, strb, error);
       end
@@ -703,7 +826,11 @@ program automatic test #(
     $info("Configuring gpios into random modes.");
     `SV_RAND_CHECK(randomize(gpio_modes));
     for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth*2; i++) begin : cfg_gpio_modes
+`ifdef ENABLE_LESS_THAN_16_GPIOS_REG_PKG_WORKAROUND
+      addr = GPIO_GPIO_MODE_OFFSET + i*4;
+`else
       addr = GPIO_GPIO_MODE_0_OFFSET + i*4;
+`endif
       data = gpio_modes[i*(DataWidth/2)+:DataWidth/2];
       gpio_reg_driver.send_write(addr, data, strb, error);
       assert(error == 0) else begin
@@ -718,7 +845,11 @@ program automatic test #(
       // Set random gpio out values
       `SV_RAND_CHECK(randomize(gpio_values));
       for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
+`ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
+        addr = GPIO_GPIO_OUT_OFFSET + i*4;
+`else
         addr = GPIO_GPIO_OUT_0_OFFSET + i*4;
+`endif
         data = gpio_values[i*DataWidth+:DataWidth];
         gpio_reg_driver.send_write(addr, data, strb, error);
         assert(error == 0) else begin
