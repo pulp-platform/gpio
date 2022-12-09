@@ -90,7 +90,7 @@ module tb_gpio;
   logic [NrGPIOs-1:0]   gpio_in_sync;
   logic [NrGPIOs-1:0]   gpio_out;
   logic [NrGPIOs-1:0]   gpio_tx_en;
-  logic                 interrupt;
+  logic                 global_interrupt;
 
 
   // Instantiate DUT
@@ -98,16 +98,17 @@ module tb_gpio;
     .ADDR_WIDTH ( AddrWidth ),
     .DATA_WIDTH ( DataWidth )
   ) i_dut (
-    .reg_bus        ( s_reg_bus.in                ),
+    .reg_bus                ( s_reg_bus.in              ),
     // Outputs
-    .gpio_out       ( gpio_out[NrGPIOs-1:0]       ),
-    .gpio_tx_en_o   ( gpio_tx_en[NrGPIOs-1:0]     ),
-    .gpio_in_sync_o ( gpio_in_sync[NrGPIOs-1:0]   ),
-    .interrupt_o    ( interrupt                   ),
+    .gpio_out               ( gpio_out[NrGPIOs-1:0]     ),
+    .gpio_tx_en_o           ( gpio_tx_en[NrGPIOs-1:0]   ),
+    .gpio_in_sync_o         ( gpio_in_sync[NrGPIOs-1:0] ),
+    .global_interrupt_o     ( global_interrupt          ),
+    .pin_level_interrupts_o (                           ),
     // Inputs
-    .clk_i          ( clk                         ),
-    .rst_ni         ( rst_n                       ),
-    .gpio_in        ( gpio_in[NrGPIOs-1:0]        )
+    .clk_i                  ( clk                       ),
+    .rst_ni                 ( rst_n                     ),
+    .gpio_in                ( gpio_in[NrGPIOs-1:0]      )
   );
 
   // Connect test programm
@@ -119,15 +120,15 @@ module tb_gpio;
     .TestTime       (  TestTime      ),
     .NumRepetitions ( NumRepetitions )
    ) i_test (
-    .end_of_sim_o   ( end_of_sim   ),
-    .clk_i          ( clk          ),
-    .rst_ni         ( rst_n        ),
-    .gpio_in_o      ( gpio_in      ),
-    .gpio_out_i     ( gpio_out     ),
-    .gpio_tx_en_i   ( gpio_tx_en   ),
-    .gpio_in_sync_i ( gpio_in_sync ),
-    .interrupt_i    ( interrupt    ),
-    .reg_bus        ( s_reg_bus    )
+    .end_of_sim_o       ( end_of_sim       ),
+    .clk_i              ( clk              ),
+    .rst_ni             ( rst_n            ),
+    .gpio_in_o          ( gpio_in          ),
+    .gpio_out_i         ( gpio_out         ),
+    .gpio_tx_en_i       ( gpio_tx_en       ),
+    .gpio_in_sync_i     ( gpio_in_sync     ),
+    .global_interrupt_i ( global_interrupt ),
+    .reg_bus            ( s_reg_bus        )
   );
 endmodule
 
@@ -149,7 +150,7 @@ program automatic test #(
   input logic [NrGPIOs-1:0]  gpio_tx_en_i, // 0 -> input, 1 -> output
   input logic [NrGPIOs-1:0]  gpio_in_sync_i, // sampled and synchronized GPIO
   // input.
-  input logic                interrupt_i,
+  input logic                global_interrupt_i,
   REG_BUS.out                reg_bus
 );
   default clocking cb @(posedge clk_i);
@@ -437,7 +438,7 @@ program automatic test #(
 
     $info("Put GPIOs into random interrupt modes...");
     // We randomize the modes such that there are not to many enabled
-    // interrupts. Otherwise the interrupt line will probably stay high all the
+    // interrupts. Otherwise the global_interrupt line will probably stay high all the
     // time due to the level sensitive interrupts.
     std::randomize(interrupt_modes) with {
        foreach (interrupt_modes[i]) {
@@ -554,7 +555,7 @@ program automatic test #(
           end
         endcase
       end
-      $info("Checking interrupt status regs...");
+      $info("Checking global_interrupt status regs...");
       pending_intrpt = pending_high_intrpt | pending_low_intrpt | pending_rise_intrpt | pending_fall_intrpt;
       if (pending_intrpt) begin
         if (pending_rise_intrpt | pending_fall_intrpt) begin
@@ -566,13 +567,13 @@ program automatic test #(
         end
 
         #TestTime;
-        assert(interrupt_i == 1'b1) else begin
+        assert(global_interrupt_i == 1'b1) else begin
           $error("Interrupt was not asserted.");
           error_count++;
         end
-        ##2; // Wait another 2 cycles for the interrupt status register to be
+        ##2; // Wait another 2 cycles for the global_interrupt status register to be
              // updated
-        //Read interrupt status registers
+        //Read global_interrupt status registers
         for (int i = 0; i < (NrGPIOs+DataWidth-1)/DataWidth; i++) begin
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
           addr = GPIO_INTRPT_STATUS_OFFSET + i*4;
@@ -627,7 +628,7 @@ program automatic test #(
         end
 
         //Now clear some of the pending interrupts
-        $info("Start interrupt clearing...");
+        $info("Start global_interrupt clearing...");
         foreach(pending_intrpt[j]) begin
           if (pending_intrpt[j]) begin
             randcase
@@ -647,7 +648,7 @@ program automatic test #(
               end
 
               1: begin
-                //Don't clear the interrupt
+                //Don't clear the global_interrupt
               end
             endcase
           end
@@ -657,7 +658,7 @@ program automatic test #(
           if (pending_rise_intrpt[j]) begin
             randcase
               2: begin
-                $info("Clearing rise interrupt on GPIO %0d.", j);
+                $info("Clearing rise global_interrupt on GPIO %0d.", j);
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
                 addr = GPIO_INTRPT_RISE_STATUS_OFFSET + j/32*4;
 `else
@@ -669,7 +670,7 @@ program automatic test #(
               end
 
               1: begin
-                //Don't clear the interrupt
+                //Don't clear the global_interrupt
               end
             endcase
           end
@@ -679,7 +680,7 @@ program automatic test #(
           if (pending_fall_intrpt[j]) begin
             randcase
               2: begin
-                $info("Clearing fall interrupt on GPIO %0d.", j);
+                $info("Clearing fall global_interrupt on GPIO %0d.", j);
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
                 addr = GPIO_INTRPT_FALL_STATUS_OFFSET + j/32*4;
 `else
@@ -691,7 +692,7 @@ program automatic test #(
               end
 
               1: begin
-                //Don't clear the interrupt
+                //Don't clear the global_interrupt
               end
             endcase
           end
@@ -701,7 +702,7 @@ program automatic test #(
           if (pending_low_intrpt[j]) begin
             randcase
               4: begin
-                $info("Clearing low interrupt on GPIO %0d and asserting the gpio input.", j);
+                $info("Clearing low global_interrupt on GPIO %0d and asserting the gpio input.", j);
                 gpio_in_o[j] = 1'b1;
                 ##3;
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
@@ -715,7 +716,7 @@ program automatic test #(
               end
 
               2: begin
-                $info("Clearing low interrupt on GPIO %0d.", j);
+                $info("Clearing low global_interrupt on GPIO %0d.", j);
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
                 addr = GPIO_INTRPT_LVL_LOW_STATUS_OFFSET + j/32*4;
 `else
@@ -727,7 +728,7 @@ program automatic test #(
               end
 
               1: begin
-                //Don't clear the interrupt
+                //Don't clear the global_interrupt
               end
             endcase
           end
@@ -737,7 +738,7 @@ program automatic test #(
           if (pending_high_intrpt[j]) begin
             randcase
               4: begin
-                $info("Clearing high interrupt on GPIO %0d and clearing the gpio input.", j);
+                $info("Clearing high global_interrupt on GPIO %0d and clearing the gpio input.", j);
                 gpio_in_o[j] = 1'b0;
                 ##3;
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
@@ -751,7 +752,7 @@ program automatic test #(
               end
 
               2: begin
-                $info("Clearing high interrupt on GPIO %0d.", j);
+                $info("Clearing high global_interrupt on GPIO %0d.", j);
 `ifdef ENABLE_LESS_THAN_32_GPIOS_REG_PKG_WORKAROUND
                 addr = GPIO_INTRPT_LVL_HIGH_STATUS_OFFSET + j/32*4;
 `else
@@ -763,7 +764,7 @@ program automatic test #(
               end
 
               1: begin
-                //Don't clear the interrupt
+                //Don't clear the global_interrupt
               end
             endcase
           end
@@ -784,8 +785,8 @@ program automatic test #(
         end
 
       end else begin
-        assert(interrupt_i == 1'b0) else begin
-          $error("Detected stray interrupt!");
+        assert(global_interrupt_i == 1'b0) else begin
+          $error("Detected stray global_interrupt!");
           error_count++;
         end
       end
@@ -805,7 +806,7 @@ program automatic test #(
       end
 
       ##3;
-      assert(interrupt_i == 1'b0) else begin
+      assert(global_interrupt_i == 1'b0) else begin
         $error("Failed to clear all interrupts.");
         error_count++;
       end
