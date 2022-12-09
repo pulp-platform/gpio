@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 0.2.0 - 2022-12-09
+### Breaking Changes
+- Changed the module interface. ``interrupt_o`` was renamed to
+  ``global_interrupt_o``. Additionally, the module also exposes pin level
+  interrupt signals in addition to the single, globally multiplexed gpio
+  interrupt signal. Existing RTL integrating this IP need to adapt the port
+  list of their instantiations.
+### Changed
+- Change default pad count from 56 to 32.
+- Use the clock gated input stage by default for simulation targets
+- Bump AXI Version
+### Fixed
+- Fix warning about unconnected interface port
+
 ## 0.1.2 - 2022-12-04
 ### Changelog
 - Added make dependencies to auto-setup python env for reconfiguration
