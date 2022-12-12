@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Changed
+- Simplified reconfiguration flow by using vendored-in regtool.py
+
 ## 0.2.0 - 2022-12-09
 ### Breaking Changes
 - Changed the module interface. ``interrupt_o`` was renamed to
@@ -19,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fix warning about unconnected interface port
 
 ## 0.1.2 - 2022-12-04
-### Changelog
+### Changed
 - Added make dependencies to auto-setup python env for reconfiguration
 
 ### Fixed
