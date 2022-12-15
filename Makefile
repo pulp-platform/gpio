@@ -7,7 +7,7 @@ include Makefile.venv
 GPIOS ?= 32
 
 ## Regenerate the register file and HAL C-header for a different GPIO count. Usage: make reconfigure GPIOS=128
-reconfigure: .bender/git/checkouts | venv
+reconfigure: | venv
 	@echo Reconfiguring IP to use $(GPIOS) gpios...
 	@sed -i -r 's/default: "[0-9]+"/default: "${GPIOS}"/g' gpio_regs.hjson
 ifeq ($(shell expr $(GPIOS) \<= 16), 1)
