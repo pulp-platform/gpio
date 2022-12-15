@@ -23,9 +23,6 @@ package gpio_reg_pkg;
     struct packed {
       logic        q;
     } pin_lvl_intrpt_mode;
-    struct packed {
-      logic        q;
-    } reserved;
   } gpio_reg2hw_cfg_reg_t;
 
   typedef struct packed {
@@ -136,7 +133,7 @@ package gpio_reg_pkg;
 
   // Register -> HW type
   typedef struct packed {
-    gpio_reg2hw_cfg_reg_t cfg; // [642:640]
+    gpio_reg2hw_cfg_reg_t cfg; // [641:640]
     gpio_reg2hw_gpio_mode_mreg_t [31:0] gpio_mode; // [639:576]
     gpio_reg2hw_gpio_en_mreg_t [31:0] gpio_en; // [575:544]
     gpio_reg2hw_gpio_out_mreg_t [31:0] gpio_out; // [543:512]

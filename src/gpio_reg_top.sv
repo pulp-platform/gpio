@@ -78,9 +78,6 @@ module gpio_reg_top #(
   logic cfg_pin_lvl_intrpt_mode_qs;
   logic cfg_pin_lvl_intrpt_mode_wd;
   logic cfg_pin_lvl_intrpt_mode_we;
-  logic cfg_reserved_qs;
-  logic cfg_reserved_wd;
-  logic cfg_reserved_we;
   logic [1:0] gpio_mode_0_mode_0_qs;
   logic [1:0] gpio_mode_0_mode_0_wd;
   logic gpio_mode_0_mode_0_we;
@@ -1583,7 +1580,7 @@ module gpio_reg_top #(
   );
 
 
-  //   F[pin_lvl_intrpt_mode]: 0:0
+  //   F[pin_lvl_intrpt_mode]: 1:1
   prim_subreg #(
     .DW      (1),
     .SWACCESS("RW"),
@@ -1606,32 +1603,6 @@ module gpio_reg_top #(
 
     // to register interface (read)
     .qs     (cfg_pin_lvl_intrpt_mode_qs)
-  );
-
-
-  //   F[reserved]: 1:1
-  prim_subreg #(
-    .DW      (1),
-    .SWACCESS("RW"),
-    .RESVAL  (1'h0)
-  ) u_cfg_reserved (
-    .clk_i   (clk_i    ),
-    .rst_ni  (rst_ni  ),
-
-    // from register interface
-    .we     (cfg_reserved_we),
-    .wd     (cfg_reserved_wd),
-
-    // from internal hardware
-    .de     (1'b0),
-    .d      ('0  ),
-
-    // to internal hardware
-    .qe     (),
-    .q      (reg2hw.cfg.reserved.q ),
-
-    // to register interface (read)
-    .qs     (cfg_reserved_qs)
   );
 
 
@@ -13330,10 +13301,7 @@ module gpio_reg_top #(
   assign cfg_glbl_intrpt_mode_wd = reg_wdata[0];
 
   assign cfg_pin_lvl_intrpt_mode_we = addr_hit[1] & reg_we & !reg_error;
-  assign cfg_pin_lvl_intrpt_mode_wd = reg_wdata[0];
-
-  assign cfg_reserved_we = addr_hit[1] & reg_we & !reg_error;
-  assign cfg_reserved_wd = reg_wdata[1];
+  assign cfg_pin_lvl_intrpt_mode_wd = reg_wdata[1];
 
   assign gpio_mode_0_mode_0_we = addr_hit[2] & reg_we & !reg_error;
   assign gpio_mode_0_mode_0_wd = reg_wdata[1:0];
@@ -14882,8 +14850,7 @@ module gpio_reg_top #(
 
       addr_hit[1]: begin
         reg_rdata_next[0] = cfg_glbl_intrpt_mode_qs;
-        reg_rdata_next[0] = cfg_pin_lvl_intrpt_mode_qs;
-        reg_rdata_next[1] = cfg_reserved_qs;
+        reg_rdata_next[1] = cfg_pin_lvl_intrpt_mode_qs;
       end
 
       addr_hit[2]: begin
