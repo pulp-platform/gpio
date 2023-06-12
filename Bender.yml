@@ -26,7 +26,7 @@ sources:
   - target: all(any(fpga, gpio_no_clk_gates), not(gpio_with_clk_gates))
     files:
       - src/gpio_input_stage_no_clk_gates.sv
-external_import:
+vendor_package:
   - name: reggen
     target_dir: "util"
     upstream: { git: "https://github.com/pulp-platform/register_interface.git", rev: "fe3cc459f02a75efed697cf0d6cb73df27763dbe"}
