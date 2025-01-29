@@ -81,7 +81,9 @@ module gpio_apb_wrap # (
 endmodule // gpio_apb_wrap
 
 
-module gpio_apb_wrap_intf # (
+module gpio_apb_wrap_intf
+  import apb_pkg::*;
+# (
   /// ADDR_WIDTH of the APB interface
   parameter int unsigned  ADDR_WIDTH = 32,
   /// DATA_WIDTH of the APB interface
