@@ -104,7 +104,9 @@ module gpio_axi_lite_wrap # (
 
 endmodule
 
-module gpio_axi_lite_wrap_intf # (
+module gpio_axi_lite_wrap_intf
+  import axi_pkg::*;
+# (
   /// ADDR_WIDTH of the AXI lite interface
   parameter int unsigned  ADDR_WIDTH = 32,
   /// DATA_WIDTH of the AXI lite interface
